@@ -1,0 +1,36 @@
+body {
+    background: #efefef;
+    color: #6d6d6d;
+    margin: 0px;
+    padding: 40px 10px;
+    text-align: center;
+}
+
+#content {
+    text-align: left;
+}
+
+ul {
+    list-style-type: none;
+    margin: 10px;
+}
+
+a:link {
+    color: #6d6d6d;
+    text-decoration: none;
+}
+
+a:visited {
+    color: #6d6d6d;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #6d6d6d;
+    text-decoration: underline;
+}
+
+a:active {
+    color: #6d6d6d;
+    text-decoration: underline;
+}

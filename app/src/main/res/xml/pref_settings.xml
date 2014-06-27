@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+        xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <CheckBoxPreference
+            android:key="show_index"
+            android:title="@string/settings_show_index"
+            android:summaryOn="@string/settings_show_index_on"
+            android:summaryOff="@string/settings_show_index_off"
+            android:defaultValue="false"/>
+    <EditTextPreference
+            android:key="expiration"
+            android:title="@string/settings_expiration"
+            android:summary="@string/settings_expiration_summary"
+            android:inputType="number"
+            android:defaultValue="15"/>
+    <EditTextPreference
+            android:key="port"
+            android:title="@string/settings_port"
+            android:summary="@string/settings_port_summary"
+            android:inputType="number"
+            android:defaultValue="8808"/>
+
+</PreferenceScreen>
