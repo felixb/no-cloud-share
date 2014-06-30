@@ -145,6 +145,7 @@ public class ShareActivity extends Activity {
         }
 
         if (list.size() == 0) {
+            Log.e(TAG, "#list: 0, intent: ", getIntent());
             Toast.makeText(this, R.string.error_unknown, Toast.LENGTH_LONG).show();
             finish();
             return;
@@ -219,7 +220,7 @@ public class ShareActivity extends Activity {
     public boolean onOptionsItemSelected(final MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                Intent i = new Intent(this, ShareActivity.class);
+                Intent i = new Intent(this, ShareListActivity.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(i);
                 finish();
