@@ -7,7 +7,7 @@ buildscript {
     }
 }
 
-apply plugin: 'android'
+apply plugin: 'com.android.application'
 
 repositories {
     maven {
@@ -21,6 +21,7 @@ repositories {
 
 ext {
     gitVersion = null
+    archivesBaseName = 'no-cloud-share'
 }
 
 def getVersionName = { ->
@@ -67,7 +68,7 @@ def getVersionCode = { minSdk ->
 
 android {
     compileSdkVersion 19
-    buildToolsVersion "19.1.0"
+    buildToolsVersion "20"
 
     defaultConfig {
         applicationId "de.ub0r.android.nocloudshare"
@@ -103,6 +104,15 @@ android {
             signingConfig signingConfigs.release
             proguardFile 'proguard.cfg'
             runProguard true
+        }
+
+        applicationVariants.all { variant ->
+            if (!variant.name.contains('debug')) {
+                def file = variant.outputFile
+                variant.outputFile =
+                        new File(file.parent,
+                                file.name.replace('.apk', '-' + defaultConfig.versionName + '.apk'))
+            }
         }
     }
 }
