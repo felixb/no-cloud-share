@@ -1,11 +1,15 @@
 package de.ub0r.android.nocloudshare;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
@@ -14,6 +18,7 @@ import android.text.format.Formatter;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.util.List;
 
 import de.ub0r.android.logg0r.Log;
 import de.ub0r.android.nocloudshare.http.Httpd;
@@ -123,6 +128,7 @@ public class HttpService extends Service {
                 stopSelf();
             }
         }
+        showNotification();
 
         scheduleTermination();
     }
@@ -138,6 +144,8 @@ public class HttpService extends Service {
             mWakeLock.release();
             Log.d(TAG, "WakeLock released");
         }
+
+        cancelNotification();
     }
 
     private boolean isWifiConnected() {
@@ -167,5 +175,41 @@ public class HttpService extends Service {
                 startHttpd();
             }
         }, 1000 + maxExpiration - System.currentTimeMillis());
+    }
+
+    private void showNotification() {
+        List<ShareItem> items = mContainer.getActiveShares();
+        ShareItem singleItem = items.size() == 1 ? items.get(0) : null;
+
+        NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        Notification.Builder b = new Notification.Builder(this);
+        b.setContentTitle(getString(R.string.app_name));
+        b.setSmallIcon(R.drawable.ic_stat_share);
+        if (singleItem == null) {
+            b.setContentText(getString(R.string.active_shares, items.size()));
+            b.setContentIntent(PendingIntent
+                    .getActivity(this, 0, new Intent(this, ShareListActivity.class),
+                            PendingIntent.FLAG_UPDATE_CURRENT));
+        } else {
+            b.setContentText(getString(R.string.active_share, singleItem.getName()));
+            Intent intent = new Intent(Intent.ACTION_VIEW, null, this, ShareActivity.class);
+            intent.putExtra(ShareActivity.EXTRA_HASH, singleItem.getHash());
+            b.setContentIntent(PendingIntent.getActivity(this, 0, intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT));
+        }
+
+        Notification n;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+            //noinspection deprecation
+            n = b.getNotification();
+        } else {
+            n = b.build();
+        }
+        nm.notify(0, n);
+    }
+
+    private void cancelNotification() {
+        NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        nm.cancel(0);
     }
 }

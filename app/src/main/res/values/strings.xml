@@ -14,6 +14,8 @@
     <string name="action_remove">Remove</string>
     <string name="action_remove_expired">Remove expired shares</string>
 
+    <string name="active_shares">Currently sharing: %d</string>
+    <string name="active_share">Currently sharing: %s</string>
     <string name="creation_ts">cr: %s</string>
     <string name="expiration_ts">ex: %s</string>
     <string name="copied_to_clipboard">URL copied to clipboard</string>
