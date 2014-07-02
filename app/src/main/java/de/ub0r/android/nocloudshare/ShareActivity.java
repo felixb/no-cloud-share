@@ -10,6 +10,8 @@ import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -19,6 +21,8 @@ import android.widget.ShareActionProvider;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -75,21 +79,44 @@ public class ShareActivity extends Activity {
         super.onCreate(savedInstanceState);
         Intent i = getIntent();
         Log.d(TAG, "intent: ", i);
-        String action = i.getAction();
-        mViewOnly = Intent.ACTION_VIEW.equals(action);
+        mViewOnly = Intent.ACTION_VIEW.equals(i.getAction());
 
         mCache = BitmapLruCache.getDefaultBitmapLruCache(this);
         mQueue = Volley.newRequestQueue(this);
         mLoader = new ImageLoader(mQueue, mCache);
         mFormat = android.text.format.DateFormat.getTimeFormat(this);
+        mContainer = ShareItemContainer.getInstance(this);
 
         setContentView(R.layout.activity_share);
         ButterKnife.inject(this);
         //noinspection ConstantConditions
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
+        // get list of shared items from intent
+        // it's mostly only one item
+        List<ShareItem> list = handleIntent(i);
+        if (list == null) {
+            return;
+        }
+
+        // create thumbnails
+        createThumbnails(list);
+
+        mItem = list.get(0);
+        if (!mViewOnly) {
+            mContainer.persist(this);
+            HttpService.startService(this);
+        }
+
+        getActionBar().setSubtitle(mItem.getName());
+
+        updateViews();
+    }
+
+    private List<ShareItem> handleIntent(final Intent i) {
+        String action = i.getAction();
         String mimeType = i.getType();
-        mContainer = ShareItemContainer.getInstance(this);
+
         ArrayList<ShareItem> list = new ArrayList<ShareItem>();
         long expirationPeriod = SettingsActivity
                 .getExpirationPeriod(PreferenceManager.getDefaultSharedPreferences(this));
@@ -148,7 +175,7 @@ public class ShareActivity extends Activity {
             Log.e(TAG, "#list: 0, intent: ", getIntent());
             Toast.makeText(this, R.string.error_unknown, Toast.LENGTH_LONG).show();
             finish();
-            return;
+            return null;
         }
 
         mBaseUrl = HttpService.getBaseUrl(this);
@@ -161,16 +188,54 @@ public class ShareActivity extends Activity {
             list.set(0, item);
             mContainer.add(item);
         }
+        return list;
+    }
 
-        mItem = list.get(0);
-        if (!mViewOnly) {
-            mContainer.persist(this);
-            HttpService.startService(this);
+    private void createThumbnails(final List<ShareItem> list) {
+        for (ShareItem item : list) {
+            String thumb = item.getThmubnailName();
+            if (thumb == null) {
+                continue;
+            }
+            if (mCache.getBitmap(thumb) != null) {
+                continue;
+            }
+            createThumbnail(item, thumb);
         }
+    }
 
-        getActionBar().setSubtitle(mItem.getName());
+    private void createThumbnail(final ShareItem item, final String thumb) {
+        try {
+            // get orig image size
+            InputStream is = getContentResolver().openInputStream(item.getUri());
+            if (is == null) {
+                return;
+            }
+            BitmapFactory.Options o = new BitmapFactory.Options();
+            o.inJustDecodeBounds = true;
+            BitmapFactory.decodeStream(is, null, o);
 
-        updateViews();
+            // calculate scale
+            int scale = 1;
+            if (o.outHeight > ShareItem.THUMBNAIL_SIZE
+                    || o.outWidth > ShareItem.THUMBNAIL_SIZE) {
+                scale = (int) Math.pow(2, (int) Math.round(Math.log(ShareItem.THUMBNAIL_SIZE
+                        / (double) Math.max(o.outHeight, o.outWidth)) / Math.log(0.5)));
+            }
+            is.close();
+
+            // decode image with scale
+            is = getContentResolver().openInputStream(item.getUri());
+            o = new BitmapFactory.Options();
+            o.inSampleSize = scale;
+            Bitmap b = BitmapFactory.decodeStream(is, null, o);
+            is.close();
+
+            // put image into cache
+            mCache.putBitmap(thumb, b);
+        } catch (IOException e) {
+            Log.e(TAG, "unable to create thumbnail", e);
+        }
     }
 
     private void updateViews() {

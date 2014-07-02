@@ -3,6 +3,7 @@ package de.ub0r.android.nocloudshare;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.text.DateFormat;
@@ -19,6 +21,7 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import de.ub0r.android.nocloudshare.http.BitmapLruCache;
 import de.ub0r.android.nocloudshare.model.ShareItem;
 import de.ub0r.android.nocloudshare.model.ShareItemContainer;
 
@@ -39,6 +42,9 @@ public class ShareListActivity extends ListActivity implements AdapterView.OnIte
 
             @InjectView(R.id.item_expiration)
             TextView expirationTextView;
+
+            @InjectView(R.id.item_thumbnail)
+            ImageView thumbnailImageView;
 
             ViewHolder(final View view) {
                 ButterKnife.inject(this, view);
@@ -83,6 +89,21 @@ public class ShareListActivity extends ListActivity implements AdapterView.OnIte
                     getContext().getString(R.string.expiration_ts, mFormat.format(expiration)));
             h.expirationTextView.setTextColor(getContext().getResources()
                     .getColor(item.isExpired() ? R.color.expired : R.color.not_expired));
+
+            String thumb = item.getThmubnailName();
+            if (thumb == null) {
+                h.thumbnailImageView.setVisibility(View.GONE);
+            } else {
+                BitmapLruCache cache = BitmapLruCache
+                        .getDefaultBitmapLruCache(getContext());
+                Bitmap b = cache.getBitmap(thumb);
+                if (b == null) {
+                    h.thumbnailImageView.setVisibility(View.GONE);
+                } else {
+                    h.thumbnailImageView.setVisibility(View.VISIBLE);
+                    h.thumbnailImageView.setImageBitmap(b);
+                }
+            }
 
             return v;
         }

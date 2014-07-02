@@ -3,7 +3,17 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:paddingTop="@dimen/item_share_padding_vertical"
+        android:paddingBottom="@dimen/item_share_padding_vertical">
+
+    <ImageView
+            android:id="@+id/item_thumbnail"
+            android:layout_width="@dimen/item_share_thumbnail_width"
+            android:layout_height="@dimen/item_share_thumbnail_height"
+            android:layout_marginRight="@dimen/item_share_thumbnail_padding"
+            android:scaleType="fitCenter"
+            android:contentDescription="@string/thumbnail_description"/>
 
     <TextView
             android:id="@+id/item_creation"
@@ -25,6 +35,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@id/item_creation"
+            android:layout_toRightOf="@id/item_thumbnail"
             android:singleLine="true"
             android:ellipsize="middle"
             android:textAppearance="?android:textAppearanceLarge"
@@ -33,9 +44,11 @@
 
     <TextView
             android:id="@+id/item_mime"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/item_name"
+            android:layout_alignLeft="@id/item_name"
+            android:layout_alignRight="@id/item_name"
             android:text="mime"
             tools:ignore="HardcodedText"/>
 

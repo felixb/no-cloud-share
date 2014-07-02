@@ -14,6 +14,8 @@ public class ShareItem {
 
     private static final long EXTEND_PERIOD = 15 * 60 * 1000;
 
+    public static final int THUMBNAIL_SIZE = 512;
+
     private final String mHash;
 
     private final Uri mUri;
@@ -141,6 +143,13 @@ public class ShareItem {
         if (c != null) {
             c.close();
         }
+    }
+
+    public String getThmubnailName() {
+        if (mUri == null || mMimeType == null || !mMimeType.startsWith("image/")) {
+            return null;
+        }
+        return "thumb_" + mHash;
     }
 
     @Override

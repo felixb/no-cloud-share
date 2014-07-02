@@ -7,6 +7,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -21,6 +22,7 @@ import java.io.IOException;
 import java.util.List;
 
 import de.ub0r.android.logg0r.Log;
+import de.ub0r.android.nocloudshare.http.BitmapLruCache;
 import de.ub0r.android.nocloudshare.http.Httpd;
 import de.ub0r.android.nocloudshare.model.ShareItem;
 import de.ub0r.android.nocloudshare.model.ShareItemContainer;
@@ -196,6 +198,13 @@ public class HttpService extends Service {
             intent.putExtra(ShareActivity.EXTRA_HASH, singleItem.getHash());
             b.setContentIntent(PendingIntent.getActivity(this, 0, intent,
                     PendingIntent.FLAG_UPDATE_CURRENT));
+            String thumb = singleItem.getThmubnailName();
+            if (thumb != null) {
+                Bitmap bm = BitmapLruCache.getDefaultBitmapLruCache(this).getBitmap(thumb);
+                if (bm != null) {
+                    b.setLargeIcon(bm);
+                }
+            }
         }
 
         Notification n;
