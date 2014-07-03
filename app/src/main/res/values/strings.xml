@@ -3,7 +3,6 @@
 
     <string name="app_name">No Cloud Share</string>
 
-    <string name="title_activity_barcode">Barcode</string>
     <string name="title_activity_about">About %s</string>
 
     <string name="action_open">Open</string>

@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <color name="not_expired">@android:color/primary_text_light</color>
     <color name="expired">#ff990000</color>
+    <color name="apptheme_color" tools:ignore="UnusedResources">#669900</color>
+    <color name="apptheme_color_highlight">#90669900</color>
 
 </resources>
