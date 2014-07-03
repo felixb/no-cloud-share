@@ -34,7 +34,7 @@ public class ShareItemContainer extends ArrayList<ShareItem> {
             final String baseUrl) {
         StringBuilder sb = new StringBuilder();
         sb.append(
-                "<!DOCTYPE html>\n<head>\n<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">\n<title>")
+                "<!DOCTYPE html>\n<head>\n<link rel=\"stylesheet\" type=\"text/css\" href=\"/style.css\">\n<title>")
                 .append(context.getString(R.string.app_name))
                 .append("</title>\n</head>\n<body>\n<div id=\"content\">\n<p>")
                 .append(context.getString(R.string.html_pretext))
