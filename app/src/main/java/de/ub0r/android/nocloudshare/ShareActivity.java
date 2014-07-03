@@ -70,6 +70,8 @@ public class ShareActivity extends Activity {
 
     private String mBaseUrl;
 
+    private Intent mOpenIntent;
+
     @InjectView(R.id.url)
     TextView mUrlTextView;
 
@@ -291,6 +293,7 @@ public class ShareActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
         getMenuInflater().inflate(R.menu.activity_share, menu);
+        // update remove/expire
         if (mItem == null) {
             menu.removeItem(R.id.action_expire);
             menu.removeItem(R.id.action_remove);
@@ -301,6 +304,22 @@ public class ShareActivity extends Activity {
         } else {
             menu.removeItem(R.id.action_remove);
         }
+
+        // update open
+        if (mItem.getUri() != null) {
+            Intent intent = new Intent(Intent.ACTION_VIEW, mItem.getUri());
+            if (intent.resolveActivity(getPackageManager()) != null) {
+                mOpenIntent = intent;
+            } else {
+                mOpenIntent = null;
+                menu.removeItem(R.id.action_open);
+            }
+        } else {
+            mOpenIntent = null;
+            menu.removeItem(R.id.action_open);
+        }
+
+        // update share
         MenuItem item = menu.findItem(R.id.action_share);
         assert item != null;
         ShareActionProvider sap = (ShareActionProvider) item.getActionProvider();
@@ -310,6 +329,7 @@ public class ShareActivity extends Activity {
         intent.putExtra(Intent.EXTRA_TEXT, url);
         intent.setType("text/plain");
         sap.setShareIntent(intent);
+
         return true;
     }
 
@@ -321,6 +341,9 @@ public class ShareActivity extends Activity {
                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(i);
                 finish();
+                return true;
+            case R.id.action_open:
+                startActivity(mOpenIntent);
                 return true;
             case R.id.action_extend:
                 mItem.setExpireIn();

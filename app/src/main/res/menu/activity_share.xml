@@ -32,4 +32,11 @@
             android:actionProviderClass="android.widget.ShareActionProvider"
             android:showAsAction="ifRoom"/>
 
+    <item
+            android:id="@+id/action_open"
+            android:title="@string/action_open"
+            android:orderInCategory="60"
+            android:icon="@android:drawable/ic_menu_view"
+            android:showAsAction="never"/>
+
 </menu>
