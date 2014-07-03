@@ -41,13 +41,8 @@
             android:exported="false" />
 
         <activity
-            android:name=".BarcodeActivity"
-            android:label="@string/title_activity_barcode" >
-        </activity>
-        <activity
             android:name=".AboutActivity"
-            android:label="@string/title_activity_about" >
-        </activity>
+            android:label="@string/title_activity_about" />
     </application>
 
 </manifest>

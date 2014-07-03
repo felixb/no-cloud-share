@@ -5,6 +5,10 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.Volley;
 
+import org.jetbrains.annotations.NotNull;
+
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ClipData;
@@ -12,11 +16,15 @@ import android.content.ClipboardManager;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ShareActionProvider;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -74,12 +82,18 @@ public class ShareActivity extends Activity {
     @InjectView(R.id.item_expiration)
     TextView mExpirationTextView;
 
+    @InjectView(R.id.shade)
+    View mShadeView;
+
+    private boolean mState;
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent i = getIntent();
         Log.d(TAG, "intent: ", i);
         mViewOnly = Intent.ACTION_VIEW.equals(i.getAction());
+        mState = savedInstanceState != null && savedInstanceState.getBoolean("mState");
 
         mCache = BitmapLruCache.getDefaultBitmapLruCache(this);
         mQueue = Volley.newRequestQueue(this);
@@ -238,6 +252,12 @@ public class ShareActivity extends Activity {
         }
     }
 
+    @Override
+    protected void onSaveInstanceState(@NotNull final Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean("mState", mState);
+    }
+
     private void updateViews() {
         String url = mBaseUrl + mItem.getExternalPath();
         Log.i(TAG, "new activity_share url: ", url);
@@ -254,6 +274,18 @@ public class ShareActivity extends Activity {
                 this.getString(R.string.expiration_ts, mFormat.format(expiration)));
         mExpirationTextView.setTextColor(this.getResources()
                 .getColor(mItem.isExpired() ? R.color.expired : R.color.not_expired));
+
+        // start with desired animation state
+        if (mState) {
+            float scale = getImageScale();
+            mUrlImageView.setScaleX(scale);
+            mUrlImageView.setScaleY(scale);
+            mShadeView.setAlpha(1f);
+        } else {
+            mUrlImageView.setScaleX(1f);
+            mUrlImageView.setScaleY(1f);
+            mShadeView.setAlpha(0f);
+        }
     }
 
     @Override
@@ -325,8 +357,46 @@ public class ShareActivity extends Activity {
 
     @OnClick(R.id.url_barcode)
     void onBarcodeClick() {
-        Intent i = new Intent(this, BarcodeActivity.class);
-        i.putExtra(EXTRA_HASH, mItem.getHash());
-        startActivity(i);
+        AnimatorSet set = new AnimatorSet();
+        if (mState) {
+            // animate close view
+            set.playTogether(
+                    ObjectAnimator.ofFloat(mShadeView, View.ALPHA, 0f),
+                    ObjectAnimator.ofFloat(mUrlImageView, View.SCALE_X, 1f),
+                    ObjectAnimator.ofFloat(mUrlImageView, View.SCALE_Y, 1f)
+            );
+        } else {
+            // animate open view
+            float scale = getImageScale();
+            set.playTogether(
+                    ObjectAnimator.ofFloat(mShadeView, View.ALPHA, 1f),
+                    ObjectAnimator.ofFloat(mUrlImageView, View.SCALE_X, scale),
+                    ObjectAnimator.ofFloat(mUrlImageView, View.SCALE_Y, scale)
+            );
+        }
+        set.start();
+        mState ^= true;
+    }
+
+    private float getImageScale() {
+        float origSize = getResources().getDimensionPixelSize(R.dimen.share_barcode_size);
+        float maxWidth;
+        float maxHeight;
+        Display display = getWindowManager().getDefaultDisplay();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+            Point size = new Point();
+            display.getSize(size);
+            maxWidth = size.x;
+            maxHeight = size.y;
+        } else {
+            //noinspection deprecation
+            maxWidth = display.getWidth();
+            //noinspection deprecation
+            maxHeight = display.getHeight();
+        }
+
+        return Math.min(
+                Math.min(maxWidth / origSize, maxHeight / origSize),
+                3);
     }
 }
