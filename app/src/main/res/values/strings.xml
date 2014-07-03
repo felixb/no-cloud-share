@@ -20,7 +20,7 @@
     <string name="creation_ts">cr: %s</string>
     <string name="expiration_ts">ex: %s</string>
     <string name="copied_to_clipboard">URL copied to clipboard</string>
-    <string name="empty_list">No active shares</string>
+    <string name="empty_list">No active shares\n\nThis is only an overview of content you are sharing within your WiFi network.\n\nUse the share feature in your favorite app to share things here.</string>
     <string name="thumbnail_description">Preview of shared image</string>
 
     <string name="settings_show_index">Show index</string>
