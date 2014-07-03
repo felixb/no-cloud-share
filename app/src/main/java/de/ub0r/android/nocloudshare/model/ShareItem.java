@@ -107,12 +107,16 @@ public class ShareItem {
         return mExpiration;
     }
 
-    public void setExpireIn() {
+    public void setExpireIn(final long expiration) {
+        mExpiration = System.currentTimeMillis() + expiration;
+    }
+
+    public void extend() {
         mExpiration = Math.max(System.currentTimeMillis(), mExpiration) + EXTEND_PERIOD;
     }
 
-    public void setExpireIn(final long expiration) {
-        mExpiration = System.currentTimeMillis() + expiration;
+    public void expire() {
+        mExpiration = System.currentTimeMillis() - 1L;
     }
 
     public boolean isExpired() {

@@ -5,17 +5,23 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.SparseBooleanArray;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -119,6 +125,68 @@ public class ShareListActivity extends ListActivity implements AdapterView.OnIte
 
         setListAdapter(new ShareItemAdapter(this, mContainer));
         getListView().setOnItemClickListener(this);
+        getListView().setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+            @Override
+            public void onItemCheckedStateChanged(final ActionMode mode, final int position,
+                    final long id, final boolean checked) {
+                mode.setTitle(getString(R.string.action_mode_selected,
+                        getListView().getCheckedItemCount()));
+
+                List<ShareItem> items = getCheckedItems();
+                boolean hasActive = false;
+                boolean hasExpired = false;
+                for (ShareItem item : items) {
+                    if (item.isExpired()) {
+                        hasExpired = true;
+                    } else {
+                        hasActive = true;
+                    }
+                    if (hasActive && hasExpired) {
+                        break;
+                    }
+                }
+                Menu menu = mode.getMenu();
+                menu.findItem(R.id.action_extend).setVisible(hasExpired);
+                menu.findItem(R.id.action_expire).setVisible(hasActive);
+            }
+
+            @Override
+            public boolean onActionItemClicked(final ActionMode mode, final MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.action_extend:
+                        extendSelectedItems();
+                        mode.finish();
+                    case R.id.action_expire:
+                        expireSelectedItems();
+                        mode.finish();
+                        return true;
+                    case R.id.action_remove:
+                        removeSelectedItems();
+                        mode.finish();
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+
+            @Override
+            public boolean onCreateActionMode(final ActionMode mode, final Menu menu) {
+                MenuInflater inflater = mode.getMenuInflater();
+                inflater.inflate(R.menu.activity_share_list_actionmode, menu);
+                return true;
+            }
+
+            @Override
+            public void onDestroyActionMode(final ActionMode mode) {
+                // nothing to do
+            }
+
+            @Override
+            public boolean onPrepareActionMode(final ActionMode mode, final Menu menu) {
+                // nothing to do
+                return false;
+            }
+        });
 
         HttpService.startService(this);
     }
@@ -153,10 +221,7 @@ public class ShareListActivity extends ListActivity implements AdapterView.OnIte
                 startActivity(new Intent(this, SettingsActivity.class));
                 return true;
             case R.id.action_remove_expired:
-                mContainer.removeExpired();
-                mContainer.persist(this);
-                notifyDataSetInvalidated();
-                HttpService.startService(this);
+                removeExpired();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -170,5 +235,62 @@ public class ShareListActivity extends ListActivity implements AdapterView.OnIte
         Intent i = new Intent(Intent.ACTION_VIEW, null, this, ShareActivity.class);
         i.putExtra(ShareActivity.EXTRA_HASH, item.getHash());
         startActivity(i);
+    }
+
+    private void removeExpired() {
+        List<ShareItem> list = mContainer.getExpiredShares();
+        mContainer.removeAll(list);
+        Toast.makeText(this, getString(R.string.removed_num, list.size()), Toast.LENGTH_LONG)
+                .show();
+        mContainer.persist(this);
+        invalidateData();
+    }
+
+    private void extendSelectedItems() {
+        List<ShareItem> list = getCheckedItems();
+        for (ShareItem item : list) {
+            item.extend();
+        }
+        Toast.makeText(this, getString(R.string.extended_num, list.size()), Toast.LENGTH_LONG)
+                .show();
+        mContainer.persist(this);
+        invalidateData();
+    }
+
+    private void expireSelectedItems() {
+        List<ShareItem> list = getCheckedItems();
+        for (ShareItem item : list) {
+            item.expire();
+        }
+        Toast.makeText(this, getString(R.string.expired_num, list.size()), Toast.LENGTH_LONG)
+                .show();
+        mContainer.persist(this);
+        invalidateData();
+    }
+
+    private void removeSelectedItems() {
+        List<ShareItem> list = getCheckedItems();
+        mContainer.removeAll(list);
+        Toast.makeText(this, getString(R.string.removed_num, list.size()), Toast.LENGTH_LONG)
+                .show();
+        mContainer.persist(this);
+        invalidateData();
+    }
+
+    private List<ShareItem> getCheckedItems() {
+        SparseBooleanArray checked = getListView().getCheckedItemPositions();
+        int l = checked.size();
+        ArrayList<ShareItem> list = new ArrayList<ShareItem>(l);
+        for (int i = 0; i < l; ++i) {
+            if (checked.valueAt(i)) {
+                list.add(mContainer.get(checked.keyAt(i)));
+            }
+        }
+        return list;
+    }
+
+    private void invalidateData() {
+        notifyDataSetInvalidated();
+        HttpService.startService(this);
     }
 }

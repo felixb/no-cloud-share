@@ -14,7 +14,7 @@
             android:id="@+id/action_expire"
             android:title="@string/action_expire"
             android:orderInCategory="20"
-            android:icon="@android:drawable/ic_menu_delete"
+            android:icon="@android:drawable/ic_menu_close_clear_cancel"
             android:showAsAction="ifRoom"/>
 
     <item

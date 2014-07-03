@@ -136,6 +136,16 @@ public class ShareItemContainer extends ArrayList<ShareItem> {
         return list;
     }
 
+    public List<ShareItem> getExpiredShares() {
+        ArrayList<ShareItem> list = new ArrayList<ShareItem>();
+        for (ShareItem item : this) {
+            if (item.isExpired()) {
+                list.add(item);
+            }
+        }
+        return list;
+    }
+
     public boolean hasExpiredShares() {
         for (ShareItem item : this) {
             if (item.isExpired()) {
@@ -143,15 +153,5 @@ public class ShareItemContainer extends ArrayList<ShareItem> {
             }
         }
         return false;
-    }
-
-    public void removeExpired() {
-        ArrayList<ShareItem> list = new ArrayList<ShareItem>();
-        for (ShareItem item : this) {
-            if (item.isExpired()) {
-                list.add(item);
-            }
-        }
-        this.removeAll(list);
     }
 }

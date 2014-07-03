@@ -346,22 +346,24 @@ public class ShareActivity extends Activity {
                 startActivity(mOpenIntent);
                 return true;
             case R.id.action_extend:
-                mItem.setExpireIn();
+                mItem.extend();
                 mContainer.persist(this);
                 updateViews();
                 invalidateOptionsMenu();
                 HttpService.startService(this);
                 return true;
             case R.id.action_expire:
-                mItem.setExpireIn(-1);
+                mItem.expire();
                 mContainer.persist(this);
                 updateViews();
                 invalidateOptionsMenu();
+                Toast.makeText(this, R.string.expired, Toast.LENGTH_LONG).show();
                 HttpService.startService(this);
                 return true;
             case R.id.action_remove:
                 mContainer.remove(mItem);
                 mContainer.persist(this);
+                Toast.makeText(this, R.string.removed, Toast.LENGTH_LONG).show();
                 HttpService.startService(this);
                 finish();
                 return true;

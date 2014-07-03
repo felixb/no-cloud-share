@@ -14,10 +14,16 @@
     <string name="action_expire">Expire</string>
     <string name="action_remove">Remove</string>
     <string name="action_remove_expired">Remove expired shares</string>
+    <string name="action_mode_selected">%d selected</string>
 
     <string name="active_shares">Currently sharing: %d</string>
     <string name="active_share">Currently sharing: %s</string>
     <string name="creation_ts">cr: %s</string>
+    <string name="expired">Expired</string>
+    <string name="expired_num">%d items expired</string>
+    <string name="removed">Removed</string>
+    <string name="removed_num">%d items removed</string>
+    <string name="extended_num">%d items extended</string>
     <string name="expiration_ts">ex: %s</string>
     <string name="copied_to_clipboard">URL copied to clipboard</string>
     <string name="empty_list">No active shares\n\nThis is only an overview of content you are sharing within your WiFi network.\n\nUse the share feature in your favorite app to share things here.</string>
