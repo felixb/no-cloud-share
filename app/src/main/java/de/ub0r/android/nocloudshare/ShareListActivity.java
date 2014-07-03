@@ -1,5 +1,10 @@
 package de.ub0r.android.nocloudshare;
 
+import org.jetbrains.annotations.NotNull;
+
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
@@ -27,11 +32,14 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import de.ub0r.android.logg0r.Log;
 import de.ub0r.android.nocloudshare.http.BitmapLruCache;
 import de.ub0r.android.nocloudshare.model.ShareItem;
 import de.ub0r.android.nocloudshare.model.ShareItemContainer;
 
 public class ShareListActivity extends ListActivity implements AdapterView.OnItemClickListener {
+
+    private static final String TAG = "ShareListActivity";
 
     class ShareItemAdapter extends ArrayAdapter<ShareItem> {
 
@@ -117,11 +125,21 @@ public class ShareListActivity extends ListActivity implements AdapterView.OnIte
 
     private ShareItemContainer mContainer;
 
+    private String mSelectedHash;
+
+    private boolean mIsTwoPane;
+
+    private boolean mOnCreateRun = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_share_list);
         mContainer = ShareItemContainer.getInstance(this);
+        mSelectedHash = savedInstanceState == null ? null
+                : savedInstanceState.getString("mSelectedHash");
+        mIsTwoPane = getResources().getBoolean(R.bool.activity_share_list_two_pane);
+        mOnCreateRun = true;
 
         setListAdapter(new ShareItemAdapter(this, mContainer));
         getListView().setOnItemClickListener(this);
@@ -188,24 +206,37 @@ public class ShareListActivity extends ListActivity implements AdapterView.OnIte
             }
         });
 
-        HttpService.startService(this);
+        if (savedInstanceState == null) {
+            String action = getIntent().getAction();
+            if (Intent.ACTION_VIEW.equals(action) || Intent.ACTION_SEND.equals(action)
+                    || Intent.ACTION_SEND_MULTIPLE.equals(action)) {
+                Intent intent = new Intent(getIntent());
+                showItem(intent);
+            }
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        notifyDataSetInvalidated();
+        if (mOnCreateRun) {
+            showSelectedItem();
+            mOnCreateRun = false;
+        } else {
+            invalidateData();
+        }
     }
 
-    private void notifyDataSetInvalidated() {
-        ((ShareItemAdapter) getListAdapter()).notifyDataSetInvalidated();
-        invalidateOptionsMenu();
+    @Override
+    protected void onSaveInstanceState(@NotNull final Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("mSelectedHash", mSelectedHash);
     }
 
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
         getMenuInflater().inflate(R.menu.activity_share_list, menu);
-        if (!mContainer.hasExpiredShares()) {
+        if (!mContainer.hasExpiredShares() || mIsTwoPane) {
             menu.removeItem(R.id.action_remove_expired);
         }
         return true;
@@ -231,10 +262,96 @@ public class ShareListActivity extends ListActivity implements AdapterView.OnIte
     @Override
     public void onItemClick(final AdapterView<?> adapter, final View view, final int pos,
             final long id) {
+        showItem(pos);
+    }
+
+    public void showItem(final int pos) {
+        Log.d(TAG, "showItem(", pos, ")");
         ShareItem item = mContainer.get(pos);
-        Intent i = new Intent(Intent.ACTION_VIEW, null, this, ShareActivity.class);
-        i.putExtra(ShareActivity.EXTRA_HASH, item.getHash());
-        startActivity(i);
+        showItem(item);
+    }
+
+    private void showItem(final ShareItem item) {
+        Log.d(TAG, "showItem(", item.getHash(), ")");
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.putExtra(ShareActivity.EXTRA_HASH, item.getHash());
+        showItem(intent);
+    }
+
+    private void showItem(final Intent intent) {
+        intent.setClass(this, ShareActivity.class);
+        mSelectedHash = intent.getStringExtra(ShareActivity.EXTRA_HASH);
+        if (mIsTwoPane) {
+            Fragment f = getActiveFragment();
+            if (f != null && f instanceof ShareFragment) {
+                // do not show already active fragments
+                String activeHash = ((ShareFragment) f).getHash();
+                if (mSelectedHash.equals(activeHash)) {
+                    Log.d(TAG, "fragment is already active: ", activeHash);
+                    return;
+                }
+            }
+            f = ShareFragment.getInstance(intent);
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            ft.replace(R.id.container, f, "details");
+            ft.commit();
+            mSelectedHash = ((ShareFragment) f).getHash();
+        } else {
+            startActivity(intent);
+        }
+    }
+
+    private void showSelectedItem() {
+        if (!mIsTwoPane) {
+            return;
+        }
+        Log.d(TAG, "showSelectedItem(): ", mSelectedHash);
+        int l = mContainer.size();
+        Log.d(TAG, "#mContainer: ", l);
+        if (mSelectedHash == null) {
+            Fragment f = getActiveFragment();
+            if (f != null && f instanceof ShareFragment) {
+                mSelectedHash = ((ShareFragment) f).getHash();
+                Log.d(TAG, "fragment's hash: ", mSelectedHash);
+            }
+        }
+        if (mSelectedHash != null && l > 0) {
+            boolean found = false;
+            for (int i = 0; i < l; ++i) {
+                if (mSelectedHash.equals(mContainer.get(i).getHash())) {
+                    showItem(i);
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                Log.w(TAG, "selected item not found!");
+                showItem(0);
+            }
+        } else if (l > 0) {
+            Log.d(TAG, "show first item");
+            showItem(0);
+        } else {
+            hideItem();
+        }
+    }
+
+    private Fragment getActiveFragment() {
+        FragmentManager fm = getFragmentManager();
+        return fm.findFragmentByTag("details");
+    }
+
+    private void hideItem() {
+        if (!mIsTwoPane) {
+            return;
+        }
+        Log.d(TAG, "hideItem()");
+        Fragment f = getActiveFragment();
+        if (f != null) {
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            ft.remove(f);
+            ft.commitAllowingStateLoss();
+        }
     }
 
     private void removeExpired() {
@@ -289,8 +406,11 @@ public class ShareListActivity extends ListActivity implements AdapterView.OnIte
         return list;
     }
 
-    private void invalidateData() {
-        notifyDataSetInvalidated();
+    public void invalidateData() {
+        Log.d(TAG, "invalidateData()");
+        ((ShareItemAdapter) getListAdapter()).notifyDataSetInvalidated();
+        invalidateOptionsMenu();
+        showSelectedItem();
         HttpService.startService(this);
     }
 }

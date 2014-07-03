@@ -11,6 +11,8 @@ public class AboutActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
+        //noinspection ConstantConditions
+        getActionBar().setDisplayHomeAsUpEnabled(true);
         setTitle(getString(R.string.title_activity_about, getString(R.string.app_name)));
         TextView versionView = (TextView) findViewById(R.id.version);
         versionView.setText("v" + BuildConfig.VERSION_NAME);

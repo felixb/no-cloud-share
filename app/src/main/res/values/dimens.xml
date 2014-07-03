@@ -2,9 +2,11 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="listview_width">320dp</dimen>
     <dimen name="about_margin_top">16dp</dimen>
     <dimen name="about_margin_left">16dp</dimen>
     <dimen name="share_barcode_size">140dp</dimen>
+    <dimen name="item_share_padding_horizontal">16dp</dimen>
     <dimen name="item_share_padding_vertical">4dp</dimen>
     <dimen name="item_share_thumbnail_width">64dp</dimen>
     <dimen name="item_share_thumbnail_height">64dp</dimen>

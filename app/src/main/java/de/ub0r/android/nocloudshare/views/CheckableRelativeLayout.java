@@ -1,4 +1,4 @@
-package de.ub0r.android.nocloudshare;
+package de.ub0r.android.nocloudshare.views;
 
 import android.content.Context;
 import android.util.AttributeSet;

@@ -40,7 +40,7 @@ public class Httpd extends NanoHTTPD {
         protected void send(final OutputStream outputStream) {
             super.send(outputStream);
 
-            // TODO remove activity_share?
+            // TODO remove fragment_share?
 
             if (!mContainer.hasActiveShares()) {
                 HttpService.stopService(mContext);

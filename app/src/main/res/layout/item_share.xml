@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<de.ub0r.android.nocloudshare.CheckableRelativeLayout
+<de.ub0r.android.nocloudshare.views.CheckableRelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingLeft="@dimen/item_share_padding_horizontal"
+        android:paddingRight="@dimen/item_share_padding_horizontal"
         android:paddingTop="@dimen/item_share_padding_vertical"
         android:paddingBottom="@dimen/item_share_padding_vertical"
         android:background="@drawable/apptheme_list_selector_holo_light">
@@ -55,4 +55,4 @@
             android:text="mime"
             tools:ignore="HardcodedText"/>
 
-</de.ub0r.android.nocloudshare.CheckableRelativeLayout>
+</de.ub0r.android.nocloudshare.views.CheckableRelativeLayout>

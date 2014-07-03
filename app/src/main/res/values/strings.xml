@@ -4,6 +4,7 @@
     <string name="app_name">No Cloud Share</string>
 
     <string name="title_activity_about">About %s</string>
+    <string name="title_activity_settings" translatable="false">@string/action_settings</string>
 
     <string name="action_open">Open</string>
     <string name="action_share">Share</string>
@@ -23,6 +24,7 @@
     <string name="expired_num">%d items expired</string>
     <string name="removed">Removed</string>
     <string name="removed_num">%d items removed</string>
+    <string name="extended">Extended</string>
     <string name="extended_num">%d items extended</string>
     <string name="copied_to_clipboard">URL copied to clipboard</string>
     <string name="empty_list">No active shares\n\nThis is only an overview of content you are sharing within your WiFi network.\n\nUse the share feature in your favorite app to share things here.</string>

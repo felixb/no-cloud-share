@@ -23,6 +23,7 @@
     <string name="expired_num">%d abgelaufen</string>
     <string name="removed">Entfernt</string>
     <string name="removed_num">%d entfernt</string>
+    <string name="extended">Verlängert</string>
     <string name="extended_num">%d verlängert</string>
     <string name="copied_to_clipboard">URL in Zwischenablage kopiert</string>
     <string name="empty_list">Keine Medien geteilt\n\nDies ist nur eine Ansicht über die Inhalte, die du in deinem WLAN teilst.\n\nBenutz die Teilen Funktion in deiner Lieblingsapp um Medien hier zu teilen.</string>
