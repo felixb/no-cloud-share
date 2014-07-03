@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="about_text">Teile Medien ohne Benutzung irgendwelcher Clouds.\n\nDiese App gibt dir die Möglichkeit einen ganz einfachen Webserver zum teilen spezifischer Medien zu starten. Damit kannst du ganz leicht Inhalte in deinem WLAN teilen.\n\nZum Teilen musst du einfach nur bei der Teilen Funktion in anderen Apps diese App auswählen. Danach können andere die Inhalte über die angezeigte ULR downloaden. Berühre den Link zum Teilen oder verwende den Barcode.</string>
+    <string name="about_version">Version</string>
+    <string name="about_author">Autor</string>
+    <string name="about_license">Lizenz</string>
+    <string name="about_website">Website &amp; Source Code</string>
+    <string name="about_oos_libs">Benutzte Open Source Bibliotheken</string>
+
+</resources>

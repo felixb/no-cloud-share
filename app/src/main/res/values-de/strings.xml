@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">No Cloud Share</string>
+
+    <string name="title_activity_about">Über %s</string>
+
+    <string name="action_open">Öffnen</string>
+    <string name="action_share">Teilen</string>
+    <string name="action_settings">Einstellungen</string>
+    <string name="action_about">Über</string>
+    <string name="action_extend">Verlängern</string>
+    <string name="action_expire">Ablaufen lassen</string>
+    <string name="action_remove">Entfernen</string>
+    <string name="action_remove_expired">Abgelaufene entfernen</string>
+    <string name="action_mode_selected">%d ausgewählt</string>
+
+    <string name="active_shares">Teile aktuell: %d</string>
+    <string name="active_share">Teile aktuell: %s</string>
+    <string name="creation_ts">erz: %s</string>
+    <string name="expiration_ts">abl: %s</string>
+    <string name="expired">Abgelaufen</string>
+    <string name="expired_num">%d abgelaufen</string>
+    <string name="removed">Entfernt</string>
+    <string name="removed_num">%d entfernt</string>
+    <string name="extended_num">%d verlängert</string>
+    <string name="copied_to_clipboard">URL in Zwischenablage kopiert</string>
+    <string name="empty_list">Keine Medien geteilt\n\nDies ist nur eine Ansicht über die Inhalte, die du in deinem WLAN teilst.\n\nBenutz die Teilen Funktion in deiner Lieblingsapp um Medien hier zu teilen.</string>
+    <string name="thumbnail_description">Vorschau des geteilten Bildes</string>
+
+    <string name="settings_show_index">Index erstellen</string>
+    <string name="settings_show_index_on">Zeige eine liste von geteilten Medien unter http://your.ip/</string>
+    <string name="settings_show_index_off">Geteilte Medien sind nur über den direkten Link erreichbar</string>
+    <string name="settings_expiration">Gültige Zeitspanne</string>
+    <string name="settings_expiration_summary">Nach Ablauf werden sind die Medien nicht mehr erreichbar (in Minuten)</string>
+    <string name="settings_port">Port</string>
+    <string name="settings_port_summary">Port für den HTTP Server</string>
+
+    <string name="error_fetch_ip">Fehler beim Auflösen der IP Adresse</string>
+    <string name="error_httpd">Fehler beim Starten des HTTP servers</string>
+    <string name="error_unknown">Unbekannter Fehler</string>
+
+    <string name="html_pretext">Die folgende Liste an Dateien steht zum Download bereit.</string>
+    <string name="html_help">Lange/Rechts klicken um den link direkt zu downloaden.</string>
+
+</resources>
