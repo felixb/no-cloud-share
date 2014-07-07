@@ -8,4 +8,9 @@
     <string name="about_website">Website &amp; Source Code</string>
     <string name="about_oos_libs">Benutzte Open Source Bibliotheken</string>
 
+    <string name="step_num">Schritt %d</string>
+    <string name="intro_description">Bildschirmfoto zum nachfolgenden Text</string>
+    <string name="intro_0">Wähle \"teilen\" in deine App und wähle dann \"No Cloud Share\".</string>
+    <string name="intro_1">Die Medien sind jetzt in deinem WLAN verfügbar.\nSchicke dem Empfänger die angezeigte URL. Benutze den Barcode oder teile die URL indem du drauf klickst.</string>
+    <string name="intro_2">Der Empfänger kann auch einen echten Computer benutzen.\nIm Browser kann der Link bzw. das Bild rechts angeklickt werden, wähle "speichern … als …".</string>
 </resources>

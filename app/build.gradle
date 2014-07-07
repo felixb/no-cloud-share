@@ -120,9 +120,11 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.intellij:annotations:+@jar'
+    compile 'com.android.support:support-v4:20.+'
     compile 'de.ub0r.android.logg0r:logg0r:+'
     compile 'com.google.code.gson:gson:+'
     compile 'com.jakewharton:butterknife:+'
     compile 'com.jakewharton:disklrucache:+'
+    compile 'com.actionbarsherlock:viewpagerindicator:+'
     compile 'com.android:volley:+'
 }

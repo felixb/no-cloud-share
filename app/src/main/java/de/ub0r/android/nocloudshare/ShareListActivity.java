@@ -8,8 +8,10 @@ import android.app.FragmentTransaction;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -32,14 +34,13 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
 import de.ub0r.android.logg0r.Log;
 import de.ub0r.android.nocloudshare.http.BitmapLruCache;
 import de.ub0r.android.nocloudshare.model.ShareItem;
 import de.ub0r.android.nocloudshare.model.ShareItemContainer;
 
 public class ShareListActivity extends ListActivity implements AdapterView.OnItemClickListener {
-
-    private static final String TAG = "ShareListActivity";
 
     class ShareItemAdapter extends ArrayAdapter<ShareItem> {
 
@@ -123,6 +124,10 @@ public class ShareListActivity extends ListActivity implements AdapterView.OnIte
         }
     }
 
+    private static final String TAG = "ShareListActivity";
+
+    private static final String PREF_SHOWN_INTRO = "intro_has_been_shown";
+
     private ShareItemContainer mContainer;
 
     private String mSelectedHash;
@@ -135,6 +140,7 @@ public class ShareListActivity extends ListActivity implements AdapterView.OnIte
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_share_list);
+        ButterKnife.inject(this);
         mContainer = ShareItemContainer.getInstance(this);
         mSelectedHash = savedInstanceState == null ? null
                 : savedInstanceState.getString("mSelectedHash");
@@ -212,6 +218,12 @@ public class ShareListActivity extends ListActivity implements AdapterView.OnIte
                     || Intent.ACTION_SEND_MULTIPLE.equals(action)) {
                 Intent intent = new Intent(getIntent());
                 showItem(intent);
+            } else {
+                SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(this);
+                if (!p.getBoolean(PREF_SHOWN_INTRO, false)) {
+                    startActivity(new Intent(this, IntroActivity.class));
+                    p.edit().putBoolean(PREF_SHOWN_INTRO, true).commit();
+                }
             }
         }
     }
@@ -263,6 +275,11 @@ public class ShareListActivity extends ListActivity implements AdapterView.OnIte
     public void onItemClick(final AdapterView<?> adapter, final View view, final int pos,
             final long id) {
         showItem(pos);
+    }
+
+    @OnClick(R.id.btn_intro)
+    void onIntroClick() {
+        startActivity(new Intent(this, IntroActivity.class));
     }
 
     public void showItem(final int pos) {
