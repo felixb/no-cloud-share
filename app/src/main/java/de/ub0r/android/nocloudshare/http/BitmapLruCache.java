@@ -69,6 +69,28 @@ public class BitmapLruCache implements ImageCache {
         }
     }
 
+    public boolean contains(final String url) {
+        Log.v(TAG, "contains(", url, ")");
+        if (mDiskCache == null) {
+            Log.w(TAG, "disk cache does not exist");
+            return false;
+        }
+
+        final String key = getKey(url);
+        DiskLruCache.Snapshot snapshot = null;
+        try {
+            snapshot = mDiskCache.get(key);
+            return snapshot != null;
+        } catch (IOException e) {
+            Log.e(TAG, "contains failed", e);
+        } finally {
+            if (snapshot != null) {
+                snapshot.close();
+            }
+        }
+        return false;
+    }
+
     @Override
     public Bitmap getBitmap(final String url) {
         Log.v(TAG, "get(", url, ")");

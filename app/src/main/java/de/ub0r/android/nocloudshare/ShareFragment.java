@@ -108,6 +108,7 @@ public class ShareFragment extends Fragment {
         mIntent = getArguments().getParcelable("intent");
         Log.d(TAG, "intent: ", mIntent);
         mViewOnly = Intent.ACTION_VIEW.equals(mIntent.getAction());
+        mBaseUrl = HttpService.getBaseUrl(getActivity());
         mState = savedInstanceState != null && savedInstanceState.getBoolean("mState");
 
         mCache = BitmapLruCache.getDefaultBitmapLruCache(getActivity());
@@ -224,15 +225,13 @@ public class ShareFragment extends Fragment {
             return null;
         }
 
-        mBaseUrl = HttpService.getBaseUrl(getActivity());
-
         if (list.size() > 1) {
             // add index for collection
             ShareItem item = new ShareItem("index.html",
                     ShareItemContainer.buildIndex(getActivity(), list, mBaseUrl), "text/html");
             item.setExpireIn(expirationPeriod);
             list.set(0, item);
-            mContainer.add(item);
+            mContainer.add(mContainer.size() - list.size(), item);
         }
         return list;
     }
@@ -243,7 +242,7 @@ public class ShareFragment extends Fragment {
             if (thumb == null) {
                 continue;
             }
-            if (mCache.getBitmap(thumb) != null) {
+            if (mCache.contains(thumb)) {
                 continue;
             }
             createThumbnail(item, thumb);
