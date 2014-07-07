@@ -14,15 +14,8 @@
             android:choiceMode="multipleChoiceModal"
             android:listSelector="@android:color/transparent"/>
 
-    <TextView
-            android:id="@android:id/empty"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:textAppearance="?android:textAppearanceLarge"
-            android:text="@string/empty_list"/>
+    <include
+            layout="@layout/include_empty"/>
 
     <FrameLayout
             android:id="@+id/container"

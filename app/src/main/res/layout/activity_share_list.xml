@@ -12,36 +12,7 @@
             android:choiceMode="multipleChoiceModal"
             android:listSelector="@android:color/transparent"/>
 
-    <LinearLayout
-            android:id="@android:id/empty"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/empty_padding"
-            android:orientation="vertical"
-            android:layout_gravity="center"
-            android:gravity="center">
-
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/empty_padding"
-                android:gravity="center"
-                android:textAppearance="?android:textAppearanceLarge"
-                android:text="@string/empty_list"/>
-
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/empty_padding"
-                android:gravity="center"
-                android:textAppearance="?android:textAppearanceMedium"
-                android:text="@string/empty_list_text"/>
-
-        <Button
-                android:id="@+id/btn_intro"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/intro"/>
-    </LinearLayout>
+    <include
+            layout="@layout/include_empty"/>
 
 </FrameLayout>
