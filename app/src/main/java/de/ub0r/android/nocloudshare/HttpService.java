@@ -60,8 +60,13 @@ public class HttpService extends Service {
             return "not.connected.to.wifi";
         }
         int ip = wifiInfo.getIpAddress();
+        if (ip == 0) {
+            Toast.makeText(context, R.string.error_no_wifi, Toast.LENGTH_LONG).show();
+        }
         // FIXME
-        return Formatter.formatIpAddress(ip);
+        String sIp = Formatter.formatIpAddress(ip);
+        Log.v(TAG, "sIp");
+        return sIp;
     }
 
     private static int getPort(final Context context) {

@@ -40,6 +40,7 @@
     <string name="settings_port">Port</string>
     <string name="settings_port_summary">Port für den HTTP Server</string>
 
+    <string name="error_no_wifi">Bitte stelle sicher, dass du mit dem WLAN verbunden bist</string>
     <string name="error_fetch_ip">Fehler beim Auflösen der IP Adresse</string>
     <string name="error_httpd">Fehler beim Starten des HTTP servers</string>
     <string name="error_unknown">Unbekannter Fehler</string>

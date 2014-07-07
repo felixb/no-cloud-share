@@ -41,6 +41,7 @@
     <string name="settings_port">Port</string>
     <string name="settings_port_summary">Port used for running the http server</string>
 
+    <string name="error_no_wifi">Please make sure, you are connected to WiFi</string>
     <string name="error_fetch_ip">Error resolving IP address</string>
     <string name="error_httpd">Error starting http server</string>
     <string name="error_unknown">Unknown error</string>
