@@ -24,6 +24,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,12 +40,16 @@ import de.ub0r.android.logg0r.Log;
 import de.ub0r.android.nocloudshare.http.BitmapLruCache;
 import de.ub0r.android.nocloudshare.model.ShareItem;
 import de.ub0r.android.nocloudshare.model.ShareItemContainer;
+import de.ub0r.android.nocloudshare.views.CheckableRelativeLayout;
 
 public class ShareListActivity extends ListActivity implements AdapterView.OnItemClickListener {
 
     class ShareItemAdapter extends ArrayAdapter<ShareItem> {
 
         class ViewHolder {
+
+            @InjectView(R.id.background)
+            CheckableRelativeLayout backgroundView;
 
             @InjectView(R.id.item_name)
             TextView nameTextView;
@@ -104,6 +109,10 @@ public class ShareListActivity extends ListActivity implements AdapterView.OnIte
                     getContext().getString(R.string.expiration_ts, mFormat.format(expiration)));
             h.expirationTextView.setTextColor(getContext().getResources()
                     .getColor(item.isExpired() ? R.color.expired : R.color.not_expired));
+            // selector background
+            h.backgroundView.setBackgroundResource(mIsTwoPane && position == mSelectedItem
+                    ? R.drawable.apptheme_list_selector_holo_light_selected
+                    : R.drawable.apptheme_list_selector_holo_light);
 
             String thumb = item.getThumbnailName();
             if (thumb == null) {
@@ -132,6 +141,8 @@ public class ShareListActivity extends ListActivity implements AdapterView.OnIte
 
     private String mSelectedHash;
 
+    private int mSelectedItem;
+
     private boolean mIsTwoPane;
 
     private boolean mOnCreateRun = false;
@@ -142,9 +153,14 @@ public class ShareListActivity extends ListActivity implements AdapterView.OnIte
         setContentView(R.layout.activity_share_list);
         ButterKnife.inject(this);
         mContainer = ShareItemContainer.getInstance(this);
-        mSelectedHash = savedInstanceState == null ? null
-                : savedInstanceState.getString("mSelectedHash");
         mIsTwoPane = getResources().getBoolean(R.bool.activity_share_list_two_pane);
+        if (savedInstanceState != null) {
+            mSelectedHash = savedInstanceState.getString("mSelectedHash", null);
+            mSelectedItem = savedInstanceState.getInt("mSelectedItem", -1);
+        } else {
+            mSelectedHash = null;
+            mSelectedItem = -1;
+        }
         mOnCreateRun = true;
 
         setListAdapter(new ShareItemAdapter(this, mContainer));
@@ -243,6 +259,7 @@ public class ShareListActivity extends ListActivity implements AdapterView.OnIte
     protected void onSaveInstanceState(@NotNull final Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString("mSelectedHash", mSelectedHash);
+        outState.putInt("mSelectedItem", mSelectedItem);
     }
 
     @Override
@@ -282,10 +299,30 @@ public class ShareListActivity extends ListActivity implements AdapterView.OnIte
         startActivity(new Intent(this, IntroActivity.class));
     }
 
+    private void setSelectedItemBackground(final int pos) {
+        if (!mIsTwoPane) {
+            mSelectedItem = pos;
+            return;
+        }
+        ListView lv = getListView();
+        int l = lv.getCount();
+        if (mSelectedItem >= 0 && mSelectedItem < l) {
+            lv.getChildAt(mSelectedItem)
+                    .setBackgroundResource(R.drawable.apptheme_list_selector_holo_light);
+        }
+        if (pos >= 0 && pos < l) {
+            lv.getChildAt(pos).setBackgroundResource(
+                    R.drawable.apptheme_list_selector_holo_light_selected);
+        }
+        mSelectedItem = pos;
+    }
+
     public void showItem(final int pos) {
         Log.d(TAG, "showItem(", pos, ")");
         ShareItem item = mContainer.get(pos);
         showItem(item);
+
+        setSelectedItemBackground(pos);
     }
 
     private void showItem(final ShareItem item) {
@@ -315,6 +352,20 @@ public class ShareListActivity extends ListActivity implements AdapterView.OnIte
             mSelectedHash = ((ShareFragment) f).getHash();
         } else {
             startActivity(intent);
+        }
+
+        if (mSelectedHash != null) {
+            int pos = -1;
+            int l = mContainer.size();
+            for (int i = 0; i < l; ++i) {
+                if (mSelectedHash.equals(mContainer.get(i).getHash())) {
+                    pos = i;
+                    break;
+                }
+            }
+            if (mSelectedItem >= 0 && mSelectedItem != pos) {
+                setSelectedItemBackground(pos);
+            }
         }
     }
 

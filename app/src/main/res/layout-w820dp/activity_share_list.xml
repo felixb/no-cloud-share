@@ -17,11 +17,19 @@
     <include
             layout="@layout/include_empty"/>
 
+    <View
+            android:id="@+id/divider"
+            android:layout_width="@dimen/listview_divider"
+            android:layout_height="match_parent"
+            android:background="@android:drawable/divider_horizontal_bright"
+            android:layout_toRightOf="@android:id/list"
+            android:layout_toEndOf="@android:id/list"/>
+
     <FrameLayout
             android:id="@+id/container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_toRightOf="@android:id/list"
-            android:layout_toEndOf="@android:id/list"/>
+            android:layout_toRightOf="@+id/divider"
+            android:layout_toEndOf="@+id/divider"/>
 
 </RelativeLayout>

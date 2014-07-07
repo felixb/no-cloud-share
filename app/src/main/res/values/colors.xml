@@ -4,6 +4,6 @@
     <color name="not_expired">@android:color/primary_text_light</color>
     <color name="expired">#ff990000</color>
     <color name="apptheme_color" tools:ignore="UnusedResources">#669900</color>
-    <color name="apptheme_color_highlight">#90669900</color>
+    <color name="apptheme_color_highlight">#50669900</color>
 
 </resources>
