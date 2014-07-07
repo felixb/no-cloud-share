@@ -198,7 +198,7 @@ public class HttpService extends Service {
             intent.putExtra(ShareActivity.EXTRA_HASH, singleItem.getHash());
             b.setContentIntent(PendingIntent.getActivity(this, 0, intent,
                     PendingIntent.FLAG_UPDATE_CURRENT));
-            String thumb = singleItem.getThmubnailName();
+            String thumb = singleItem.getThumbnailName();
             if (thumb != null) {
                 Bitmap bm = BitmapLruCache.getDefaultBitmapLruCache(this).getBitmap(thumb);
                 if (bm != null) {

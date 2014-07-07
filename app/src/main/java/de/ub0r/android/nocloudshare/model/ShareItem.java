@@ -7,10 +7,14 @@ import android.provider.MediaStore;
 
 import java.util.UUID;
 
+import de.ub0r.android.logg0r.Log;
+
 /**
  * @author flx
  */
 public class ShareItem {
+
+    private static final String TAG = "ShareItem";
 
     private static final long EXTEND_PERIOD = 15 * 60 * 1000;
 
@@ -149,8 +153,10 @@ public class ShareItem {
         }
     }
 
-    public String getThmubnailName() {
+    public String getThumbnailName() {
         if (mUri == null || mMimeType == null || !mMimeType.startsWith("image/")) {
+            Log.d(TAG, "mUri: ", mUri);
+            Log.d(TAG, "mMimeType: ", mMimeType);
             return null;
         }
         return "thumb_" + mHash;

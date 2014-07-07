@@ -105,7 +105,7 @@ public class ShareListActivity extends ListActivity implements AdapterView.OnIte
             h.expirationTextView.setTextColor(getContext().getResources()
                     .getColor(item.isExpired() ? R.color.expired : R.color.not_expired));
 
-            String thumb = item.getThmubnailName();
+            String thumb = item.getThumbnailName();
             if (thumb == null) {
                 h.thumbnailImageView.setVisibility(View.GONE);
             } else {

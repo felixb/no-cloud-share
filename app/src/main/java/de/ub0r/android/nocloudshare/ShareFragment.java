@@ -230,19 +230,22 @@ public class ShareFragment extends Fragment {
             ShareItem item = new ShareItem("index.html",
                     ShareItemContainer.buildIndex(getActivity(), list, mBaseUrl), "text/html");
             item.setExpireIn(expirationPeriod);
-            list.set(0, item);
-            mContainer.add(mContainer.size() - list.size(), item);
+            list.add(0, item);
+            mContainer.add(1 + mContainer.size() - list.size(), item);
         }
         return list;
     }
 
     private void createThumbnails(final List<ShareItem> list) {
+        Log.d(TAG, "createThumbnails(#", list.size(), ")");
         for (ShareItem item : list) {
-            String thumb = item.getThmubnailName();
+            String thumb = item.getThumbnailName();
             if (thumb == null) {
+                Log.d(TAG, "thumb == null");
                 continue;
             }
             if (mCache.contains(thumb)) {
+                Log.d(TAG, "thumbnail already present: ", thumb);
                 continue;
             }
             createThumbnail(item, thumb);
@@ -250,6 +253,7 @@ public class ShareFragment extends Fragment {
     }
 
     private void createThumbnail(final ShareItem item, final String thumb) {
+        Log.d(TAG, "createThumbnail(", item, ", ", thumb, ")");
         try {
             // get orig image size
             InputStream is = getActivity().getContentResolver().openInputStream(item.getUri());
