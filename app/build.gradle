@@ -11,10 +11,10 @@ apply plugin: 'com.android.application'
 
 repositories {
     maven {
-        url 'https://github.com/felixb/ub0rlogg0r/raw/mvn-repo/'
+        url 'https://raw.githubusercontent.com/felixb/ub0rlogg0r/mvn-repo/'
     }
     maven {
-        url 'https://github.com/Goddchen/mvn-repo/raw/master/'
+        url 'https://raw.githubusercontent.com/Goddchen/mvn-repo/master/'
     }
     mavenCentral()
 }
@@ -67,13 +67,13 @@ def getVersionCode = { minSdk ->
 }
 
 android {
-    compileSdkVersion 19
-    buildToolsVersion "20"
+    compileSdkVersion 21
+    buildToolsVersion '21.1.2'
 
     defaultConfig {
         applicationId "de.ub0r.android.nocloudshare"
         minSdkVersion 15
-        targetSdkVersion 19
+        targetSdkVersion 21
         versionName getVersionName()
         versionCode getVersionCode(minSdkVersion.mApiLevel)
     }
@@ -97,21 +97,22 @@ android {
         logRelease {
             versionNameSuffix "-logRelease"
             signingConfig signingConfigs.release
-            runProguard false
+            minifyEnabled false
         }
 
         release {
             signingConfig signingConfigs.release
             proguardFile 'proguard.cfg'
-            runProguard true
+            minifyEnabled true
         }
 
         applicationVariants.all { variant ->
             if (!variant.name.contains('debug')) {
-                def file = variant.outputFile
-                variant.outputFile =
-                        new File(file.parent,
-                                file.name.replace('.apk', '-' + defaultConfig.versionName + '.apk'))
+                variant.outputs.each { output ->
+                    def file = output.outputFile
+                    output.outputFile = new File(file.parent,
+                            file.name.replace('.apk', '-' + defaultConfig.versionName + '.apk'))
+                }
             }
         }
     }
@@ -120,7 +121,7 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.intellij:annotations:+@jar'
-    compile 'com.android.support:support-v4:20.+'
+    compile 'com.android.support:support-v4:21.+'
     compile 'de.ub0r.android.logg0r:logg0r:+'
     compile 'com.google.code.gson:gson:+'
     compile 'com.jakewharton:butterknife:+'
