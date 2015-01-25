@@ -131,12 +131,13 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    //noinspection GradleDynamicVersion
     compile 'com.intellij:annotations:+@jar'
-    compile 'com.android.support:support-v4:21.+'
-    compile 'de.ub0r.android.logg0r:logg0r:+'
-    compile 'com.google.code.gson:gson:+'
-    compile 'com.jakewharton:butterknife:+'
-    compile 'com.jakewharton:disklrucache:+'
-    compile 'com.actionbarsherlock:viewpagerindicator:+'
-    compile 'com.android:volley:+'
+    compile 'com.android.support:support-v4:21.0.3'
+    compile 'de.ub0r.android.logg0r:logg0r:2.0.0'
+    compile 'com.google.code.gson:gson:2.3.1'
+    compile 'com.jakewharton:butterknife:6.0.0'
+    compile 'com.jakewharton:disklrucache:2.0.2'
+    compile 'com.actionbarsherlock:viewpagerindicator:2.4.1'
+    compile 'com.mcxiaoke.volley:library:1.0.10'
 }
