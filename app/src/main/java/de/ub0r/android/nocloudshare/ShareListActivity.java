@@ -8,23 +8,24 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.view.ActionMode;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.SparseBooleanArray;
-import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,17 +41,18 @@ import de.ub0r.android.logg0r.Log;
 import de.ub0r.android.nocloudshare.http.BitmapLruCache;
 import de.ub0r.android.nocloudshare.model.ShareItem;
 import de.ub0r.android.nocloudshare.model.ShareItemContainer;
-import de.ub0r.android.nocloudshare.views.CheckableRelativeLayout;
+import de.ub0r.android.nocloudshare.views.RecyclerItemClickListener;
 
 public class ShareListActivity extends ActionBarActivity
-        implements AdapterView.OnItemClickListener {
+        implements RecyclerItemClickListener.OnItemClickListener,
+        ActionMode.Callback {
 
-    class ShareItemAdapter extends ArrayAdapter<ShareItem> {
+    static class ShareItemAdapter extends RecyclerView.Adapter<ShareItemAdapter.ViewHolder> {
 
-        class ViewHolder {
+        static class ViewHolder extends RecyclerView.ViewHolder {
 
             @InjectView(R.id.background)
-            CheckableRelativeLayout backgroundView;
+            RelativeLayout backgroundView;
 
             @InjectView(R.id.item_name)
             TextView nameTextView;
@@ -68,59 +70,69 @@ public class ShareListActivity extends ActionBarActivity
             ImageView thumbnailImageView;
 
             ViewHolder(final View view) {
+                super(view);
                 ButterKnife.inject(this, view);
             }
         }
 
         private static final int LAYOUT = R.layout.item_share;
 
-        private final LayoutInflater mInflater;
+        private final Context mContext;
 
         private final DateFormat mFormat;
 
+        private final List<ShareItem> mDataSet;
+
+        private final SparseBooleanArray mSelectedItems = new SparseBooleanArray();
+
+        private boolean mInSelectionMode;
+
         public ShareItemAdapter(final Context context, final List<ShareItem> objects) {
-            super(context, LAYOUT, objects);
-            mInflater = LayoutInflater.from(context);
+            mContext = context;
             mFormat = android.text.format.DateFormat.getTimeFormat(context);
+            mDataSet = objects;
         }
 
         @Override
-        public View getView(final int position, final View convertView, final ViewGroup parent) {
-            View v;
-            ViewHolder h;
-            if (convertView == null) {
-                v = mInflater.inflate(LAYOUT, parent, false);
-                assert v != null;
-                h = new ViewHolder(v);
-                v.setTag(h);
-            } else {
-                v = convertView;
-                h = (ViewHolder) v.getTag();
-            }
+        public ViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
+            View v = LayoutInflater.from(parent.getContext())
+                    .inflate(LAYOUT, parent, false);
+            return new ViewHolder(v);
+        }
 
-            ShareItem item = getItem(position);
+        @Override
+        public void onBindViewHolder(final ViewHolder h, final int pos) {
+            ShareItem item = mDataSet.get(pos);
+
+            // TODO move all calls to mContext to constructor
 
             h.nameTextView.setText(item.getName());
             h.mimeTextView.setText(item.getMimeType());
             Date creation = new Date(item.getCreation());
-            h.creationTextView.setText(getContext().getString(R.string.creation_ts,
+            h.creationTextView.setText(mContext.getString(R.string.creation_ts,
                     mFormat.format(creation)));
             Date expiration = new Date(item.getExpiration());
             h.expirationTextView.setText(
-                    getContext().getString(R.string.expiration_ts, mFormat.format(expiration)));
-            h.expirationTextView.setTextColor(getContext().getResources()
+                    mContext.getString(R.string.expiration_ts, mFormat.format(expiration)));
+            h.expirationTextView.setTextColor(mContext.getResources()
                     .getColor(item.isExpired() ? R.color.expired : R.color.not_expired));
-            // FIXME selector background
-            //h.backgroundView.setBackgroundResource(mIsTwoPane && position == mSelectedItem
-            //        ? R.drawable.apptheme_list_selector_holo_light_selected
-            //        : R.drawable.apptheme_list_selector_holo_light);
+            h.backgroundView.setActivated(mSelectedItems.get(pos, false));
+            if (mInSelectionMode) {
+                h.backgroundView.setBackgroundResource(R.drawable.selector_list_item);
+            } else {
+                int[] attrs = new int[]{android.R.attr.selectableItemBackground};
+                TypedArray ta = mContext.obtainStyledAttributes(attrs);
+                Drawable drawableFromTheme = ta.getDrawable(0);
+                ta.recycle();
+                h.backgroundView.setBackgroundDrawable(drawableFromTheme);
+            }
 
             String thumb = item.getThumbnailName();
             if (thumb == null) {
                 h.thumbnailImageView.setVisibility(View.GONE);
             } else {
                 BitmapLruCache cache = BitmapLruCache
-                        .getDefaultBitmapLruCache(getContext());
+                        .getDefaultBitmapLruCache(mContext);
                 Bitmap b = cache.getBitmap(thumb);
                 if (b == null) {
                     h.thumbnailImageView.setVisibility(View.GONE);
@@ -129,8 +141,49 @@ public class ShareListActivity extends ActionBarActivity
                     h.thumbnailImageView.setImageBitmap(b);
                 }
             }
+        }
 
-            return v;
+        @Override
+        public int getItemCount() {
+            return mDataSet.size();
+        }
+
+        public void toggleSelection(final int pos) {
+            if (mSelectedItems.get(pos, false)) {
+                mSelectedItems.delete(pos);
+            } else {
+                mSelectedItems.put(pos, true);
+            }
+            notifyItemChanged(pos);
+        }
+
+        public void clearSelections() {
+            mSelectedItems.clear();
+            notifyDataSetChanged();
+        }
+
+        public int getSelectedItemCount() {
+            return mSelectedItems.size();
+        }
+
+        public List<Integer> getSelectedItemPositions() {
+            List<Integer> items = new ArrayList<>(mSelectedItems.size());
+            for (int i = 0; i < mSelectedItems.size(); i++) {
+                items.add(mSelectedItems.keyAt(i));
+            }
+            return items;
+        }
+
+        public List<ShareItem> getSelectedItems() {
+            List<ShareItem> items = new ArrayList<>(mSelectedItems.size());
+            for (int i = 0; i < mSelectedItems.size(); i++) {
+                items.add(mDataSet.get(mSelectedItems.keyAt(i)));
+            }
+            return items;
+        }
+
+        public void setInSelectionMode(final boolean mode) {
+            mInSelectionMode = mode;
         }
     }
 
@@ -148,8 +201,12 @@ public class ShareListActivity extends ActionBarActivity
 
     private boolean mOnCreateRun = false;
 
+    private ActionMode mActionMode;
+
+    private ShareItemAdapter mAdapter;
+
     @InjectView(android.R.id.list)
-    ListView mListView;
+    RecyclerView mListView;
 
     @InjectView(android.R.id.empty)
     View mEmptyView;
@@ -159,6 +216,8 @@ public class ShareListActivity extends ActionBarActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_share_list);
         ButterKnife.inject(this);
+        mListView.setHasFixedSize(true);
+        mListView.setLayoutManager(new LinearLayoutManager(this));
         mContainer = ShareItemContainer.getInstance(this);
         mIsTwoPane = getResources().getBoolean(R.bool.activity_share_list_two_pane);
         if (savedInstanceState != null) {
@@ -170,70 +229,10 @@ public class ShareListActivity extends ActionBarActivity
         }
         mOnCreateRun = true;
 
-        mListView.setAdapter(new ShareItemAdapter(this, mContainer));
-        mListView.setOnItemClickListener(this);
-        mListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
-            @Override
-            public void onItemCheckedStateChanged(final ActionMode mode, final int position,
-                    final long id, final boolean checked) {
-                mode.setTitle(getString(R.string.action_mode_selected,
-                        mListView.getCheckedItemCount()));
-
-                List<ShareItem> items = getCheckedItems();
-                boolean hasActive = false;
-                boolean hasExpired = false;
-                for (ShareItem item : items) {
-                    if (item.isExpired()) {
-                        hasExpired = true;
-                    } else {
-                        hasActive = true;
-                    }
-                    if (hasActive && hasExpired) {
-                        break;
-                    }
-                }
-                Menu menu = mode.getMenu();
-                menu.findItem(R.id.action_extend).setVisible(hasExpired);
-                menu.findItem(R.id.action_expire).setVisible(hasActive);
-            }
-
-            @Override
-            public boolean onActionItemClicked(final ActionMode mode, final MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.action_extend:
-                        extendSelectedItems();
-                        mode.finish();
-                    case R.id.action_expire:
-                        expireSelectedItems();
-                        mode.finish();
-                        return true;
-                    case R.id.action_remove:
-                        removeSelectedItems();
-                        mode.finish();
-                        return true;
-                    default:
-                        return false;
-                }
-            }
-
-            @Override
-            public boolean onCreateActionMode(final ActionMode mode, final Menu menu) {
-                MenuInflater inflater = mode.getMenuInflater();
-                inflater.inflate(R.menu.activity_share_list_actionmode, menu);
-                return true;
-            }
-
-            @Override
-            public void onDestroyActionMode(final ActionMode mode) {
-                // nothing to do
-            }
-
-            @Override
-            public boolean onPrepareActionMode(final ActionMode mode, final Menu menu) {
-                // nothing to do
-                return false;
-            }
-        });
+        mAdapter = new ShareItemAdapter(this, mContainer);
+        mListView.setAdapter(mAdapter);
+        mListView.addOnItemTouchListener(new RecyclerItemClickListener(this, mListView, this));
+        //mListView.setMultiChoiceModeListener(this);
 
         if (savedInstanceState == null) {
             String action = getIntent().getAction();
@@ -296,10 +295,91 @@ public class ShareListActivity extends ActionBarActivity
         }
     }
 
+    public void onItemClick(final View view, final int pos) {
+        if (mActionMode == null) {
+            showItem(pos);
+        } else {
+            mAdapter.toggleSelection(pos);
+            onItemCheckedStateChanged(mActionMode);
+        }
+    }
+
     @Override
-    public void onItemClick(final AdapterView<?> adapter, final View view, final int pos,
-            final long id) {
-        showItem(pos);
+    public void onItemLongClick(final View view, final int pos) {
+        if (mActionMode != null) {
+            onItemClick(view, pos);
+            return;
+        }
+        mActionMode = startSupportActionMode(this);
+        mAdapter.toggleSelection(pos);
+        onItemCheckedStateChanged(mActionMode);
+    }
+
+    public void onItemCheckedStateChanged(final ActionMode mode) {
+        int c = mAdapter.getSelectedItemCount();
+        if (c == 0) {
+            mode.finish();
+            return;
+        }
+
+        mode.setTitle(getString(R.string.action_mode_selected, c));
+
+        List<ShareItem> items = mAdapter.getSelectedItems();
+        boolean hasActive = false;
+        boolean hasExpired = false;
+        for (ShareItem item : items) {
+            if (item.isExpired()) {
+                hasExpired = true;
+            } else {
+                hasActive = true;
+            }
+            if (hasActive && hasExpired) {
+                break;
+            }
+        }
+        Menu menu = mode.getMenu();
+        menu.findItem(R.id.action_extend).setVisible(hasExpired);
+        menu.findItem(R.id.action_expire).setVisible(hasActive);
+    }
+
+    @Override
+    public boolean onActionItemClicked(final ActionMode mode, final MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_extend:
+                extendSelectedItems();
+                mode.finish();
+            case R.id.action_expire:
+                expireSelectedItems();
+                mode.finish();
+                return true;
+            case R.id.action_remove:
+                removeSelectedItems();
+                mode.finish();
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    @Override
+    public boolean onCreateActionMode(final ActionMode mode, final Menu menu) {
+        mAdapter.setInSelectionMode(true);
+        MenuInflater inflater = mode.getMenuInflater();
+        inflater.inflate(R.menu.activity_share_list_actionmode, menu);
+        return true;
+    }
+
+    @Override
+    public void onDestroyActionMode(final ActionMode mode) {
+        mAdapter.setInSelectionMode(false);
+        mActionMode = null;
+        mAdapter.clearSelections();
+    }
+
+    @Override
+    public boolean onPrepareActionMode(final ActionMode mode, final Menu menu) {
+        // nothing to do
+        return false;
     }
 
     @OnClick(R.id.btn_intro)
@@ -312,7 +392,7 @@ public class ShareListActivity extends ActionBarActivity
             mSelectedItem = pos;
             return;
         }
-        int l = mListView.getCount();
+        int l = mContainer.size();
         if (mSelectedItem >= 0 && mSelectedItem < l) {
             // FIXME
             // mListView.getChildAt(mSelectedItem)
@@ -441,7 +521,7 @@ public class ShareListActivity extends ActionBarActivity
     }
 
     private void extendSelectedItems() {
-        List<ShareItem> list = getCheckedItems();
+        List<ShareItem> list = mAdapter.getSelectedItems();
         for (ShareItem item : list) {
             item.extend();
         }
@@ -452,7 +532,7 @@ public class ShareListActivity extends ActionBarActivity
     }
 
     private void expireSelectedItems() {
-        List<ShareItem> list = getCheckedItems();
+        List<ShareItem> list = mAdapter.getSelectedItems();
         for (ShareItem item : list) {
             item.expire();
         }
@@ -463,24 +543,12 @@ public class ShareListActivity extends ActionBarActivity
     }
 
     private void removeSelectedItems() {
-        List<ShareItem> list = getCheckedItems();
+        List<ShareItem> list = mAdapter.getSelectedItems();
         mContainer.removeAll(list);
         Toast.makeText(this, getString(R.string.removed_num, list.size()), Toast.LENGTH_LONG)
                 .show();
         mContainer.persist(this);
         invalidateData();
-    }
-
-    private List<ShareItem> getCheckedItems() {
-        SparseBooleanArray checked = mListView.getCheckedItemPositions();
-        int l = checked.size();
-        ArrayList<ShareItem> list = new ArrayList<>(l);
-        for (int i = 0; i < l; ++i) {
-            if (checked.valueAt(i)) {
-                list.add(mContainer.get(checked.keyAt(i)));
-            }
-        }
-        return list;
     }
 
     private void updateListViewVisibility() {
@@ -497,7 +565,7 @@ public class ShareListActivity extends ActionBarActivity
 
     public void invalidateData() {
         Log.d(TAG, "invalidateData()");
-        ((ShareItemAdapter) mListView.getAdapter()).notifyDataSetInvalidated();
+        mAdapter.notifyDataSetChanged();
         invalidateOptionsMenu();
         updateListViewVisibility();
         showSelectedItem();
