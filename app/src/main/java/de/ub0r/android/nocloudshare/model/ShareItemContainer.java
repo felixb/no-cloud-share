@@ -127,7 +127,7 @@ public class ShareItemContainer extends ArrayList<ShareItem> {
     }
 
     public List<ShareItem> getActiveShares() {
-        ArrayList<ShareItem> list = new ArrayList<ShareItem>();
+        ArrayList<ShareItem> list = new ArrayList<>();
         for (ShareItem item : this) {
             if (!item.isExpired()) {
                 list.add(item);
@@ -137,7 +137,7 @@ public class ShareItemContainer extends ArrayList<ShareItem> {
     }
 
     public List<ShareItem> getExpiredShares() {
-        ArrayList<ShareItem> list = new ArrayList<ShareItem>();
+        ArrayList<ShareItem> list = new ArrayList<>();
         for (ShareItem item : this) {
             if (item.isExpired()) {
                 list.add(item);

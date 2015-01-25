@@ -238,7 +238,7 @@ public class ShareListActivity extends ListActivity implements AdapterView.OnIte
                 SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(this);
                 if (!p.getBoolean(PREF_SHOWN_INTRO, false)) {
                     startActivity(new Intent(this, IntroActivity.class));
-                    p.edit().putBoolean(PREF_SHOWN_INTRO, true).commit();
+                    p.edit().putBoolean(PREF_SHOWN_INTRO, true).apply();
                 }
             }
         }
@@ -465,7 +465,7 @@ public class ShareListActivity extends ListActivity implements AdapterView.OnIte
     private List<ShareItem> getCheckedItems() {
         SparseBooleanArray checked = getListView().getCheckedItemPositions();
         int l = checked.size();
-        ArrayList<ShareItem> list = new ArrayList<ShareItem>(l);
+        ArrayList<ShareItem> list = new ArrayList<>(l);
         for (int i = 0; i < l; ++i) {
             if (checked.valueAt(i)) {
                 list.add(mContainer.get(checked.keyAt(i)));

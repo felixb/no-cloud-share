@@ -57,8 +57,6 @@ public class ShareFragment extends Fragment {
     public static final String BARCODE_URL
             = "https://chart.googleapis.com/chart?cht=qr&chs=400x400&chl=";
 
-    private RequestQueue mQueue;
-
     private BitmapLruCache mCache;
 
     private ImageLoader mLoader;
@@ -112,8 +110,8 @@ public class ShareFragment extends Fragment {
         mState = savedInstanceState != null && savedInstanceState.getBoolean("mState");
 
         mCache = BitmapLruCache.getDefaultBitmapLruCache(getActivity());
-        mQueue = Volley.newRequestQueue(getActivity());
-        mLoader = new ImageLoader(mQueue, mCache);
+        RequestQueue queue = Volley.newRequestQueue(getActivity());
+        mLoader = new ImageLoader(queue, mCache);
         mFormat = android.text.format.DateFormat.getTimeFormat(getActivity());
         mContainer = ShareItemContainer.getInstance(getActivity());
     }
@@ -164,7 +162,7 @@ public class ShareFragment extends Fragment {
         String action = i.getAction();
         String mimeType = i.getType();
 
-        ArrayList<ShareItem> list = new ArrayList<ShareItem>();
+        ArrayList<ShareItem> list = new ArrayList<>();
         long expirationPeriod = SettingsActivity
                 .getExpirationPeriod(PreferenceManager.getDefaultSharedPreferences(getActivity()));
 
