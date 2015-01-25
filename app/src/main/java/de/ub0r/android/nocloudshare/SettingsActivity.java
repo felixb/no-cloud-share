@@ -1,14 +1,16 @@
 package de.ub0r.android.nocloudshare;
 
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
+import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
 import android.view.MenuItem;
 
 import de.ub0r.android.logg0r.Log;
 
-public class SettingsActivity extends PreferenceActivity {
+public class SettingsActivity extends ActionBarActivity {
 
     private static final String TAG = "SettingsActivity";
 
@@ -42,16 +44,17 @@ public class SettingsActivity extends PreferenceActivity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.activity_share);
         //noinspection ConstantConditions
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-    }
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-
-        //noinspection deprecation
-        addPreferencesFromResource(R.xml.pref_settings);
+        if (savedInstanceState == null) {
+            Fragment f = new SettingsFragment();
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            ft.replace(R.id.container, f);
+            ft.commit();
+        }
     }
 
     @Override

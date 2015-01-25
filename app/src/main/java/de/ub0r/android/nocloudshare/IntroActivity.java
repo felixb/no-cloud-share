@@ -2,11 +2,11 @@ package de.ub0r.android.nocloudshare;
 
 import com.viewpagerindicator.CirclePageIndicator;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,7 +20,7 @@ import butterknife.InjectView;
 /**
  * @author flx
  */
-public class IntroActivity extends Activity {
+public class IntroActivity extends ActionBarActivity {
 
     static class IntroAdapter extends PagerAdapter {
 
@@ -87,7 +87,7 @@ public class IntroActivity extends Activity {
         setContentView(R.layout.activity_intro);
         ButterKnife.inject(this);
         //noinspection ConstantConditions
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mViewPager.setAdapter(new IntroAdapter(this));
         mIndicator.setViewPager(mViewPager);

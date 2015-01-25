@@ -20,13 +20,14 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.ShareActionProvider;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ShareActionProvider;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -140,8 +141,8 @@ public class ShareFragment extends Fragment {
         }
 
         if (getActivity() instanceof ShareActivity) {
-            //noinspection ConstantConditions
-            getActivity().getActionBar().setSubtitle(mItem.getName());
+            ShareActivity a = (ShareActivity) getActivity();
+            a.getSupportActionBar().setSubtitle(mItem.getName());
         }
 
         // trigger updateViews after measure layout again
@@ -354,7 +355,7 @@ public class ShareFragment extends Fragment {
         // update share
         MenuItem item = menu.findItem(R.id.action_share);
         assert item != null;
-        ShareActionProvider sap = (ShareActionProvider) item.getActionProvider();
+        ShareActionProvider sap = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
         assert sap != null;
         Intent intent = new Intent(Intent.ACTION_SEND);
         String url = mBaseUrl + mItem.getExternalPath();

@@ -1,13 +1,13 @@
 package de.ub0r.android.nocloudshare;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 
 import de.ub0r.android.logg0r.Log;
 
-public class ShareActivity extends Activity {
+public class ShareActivity extends ActionBarActivity {
 
     private static final String TAG = "ShareActivity";
 
@@ -23,8 +23,7 @@ public class ShareActivity extends Activity {
         }
 
         setContentView(R.layout.activity_share);
-        //noinspection ConstantConditions
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         if (savedInstanceState == null) {
             Fragment f = ShareFragment.getInstance(getIntent());

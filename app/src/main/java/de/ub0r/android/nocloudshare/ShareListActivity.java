@@ -5,13 +5,13 @@ import org.jetbrains.annotations.NotNull;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v7.app.ActionBarActivity;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -42,7 +42,8 @@ import de.ub0r.android.nocloudshare.model.ShareItem;
 import de.ub0r.android.nocloudshare.model.ShareItemContainer;
 import de.ub0r.android.nocloudshare.views.CheckableRelativeLayout;
 
-public class ShareListActivity extends ListActivity implements AdapterView.OnItemClickListener {
+public class ShareListActivity extends ActionBarActivity
+        implements AdapterView.OnItemClickListener {
 
     class ShareItemAdapter extends ArrayAdapter<ShareItem> {
 
@@ -109,10 +110,10 @@ public class ShareListActivity extends ListActivity implements AdapterView.OnIte
                     getContext().getString(R.string.expiration_ts, mFormat.format(expiration)));
             h.expirationTextView.setTextColor(getContext().getResources()
                     .getColor(item.isExpired() ? R.color.expired : R.color.not_expired));
-            // selector background
-            h.backgroundView.setBackgroundResource(mIsTwoPane && position == mSelectedItem
-                    ? R.drawable.apptheme_list_selector_holo_light_selected
-                    : R.drawable.apptheme_list_selector_holo_light);
+            // FIXME selector background
+            //h.backgroundView.setBackgroundResource(mIsTwoPane && position == mSelectedItem
+            //        ? R.drawable.apptheme_list_selector_holo_light_selected
+            //        : R.drawable.apptheme_list_selector_holo_light);
 
             String thumb = item.getThumbnailName();
             if (thumb == null) {
@@ -147,6 +148,12 @@ public class ShareListActivity extends ListActivity implements AdapterView.OnIte
 
     private boolean mOnCreateRun = false;
 
+    @InjectView(android.R.id.list)
+    ListView mListView;
+
+    @InjectView(android.R.id.empty)
+    View mEmptyView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -163,14 +170,14 @@ public class ShareListActivity extends ListActivity implements AdapterView.OnIte
         }
         mOnCreateRun = true;
 
-        setListAdapter(new ShareItemAdapter(this, mContainer));
-        getListView().setOnItemClickListener(this);
-        getListView().setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+        mListView.setAdapter(new ShareItemAdapter(this, mContainer));
+        mListView.setOnItemClickListener(this);
+        mListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
             @Override
             public void onItemCheckedStateChanged(final ActionMode mode, final int position,
                     final long id, final boolean checked) {
                 mode.setTitle(getString(R.string.action_mode_selected,
-                        getListView().getCheckedItemCount()));
+                        mListView.getCheckedItemCount()));
 
                 List<ShareItem> items = getCheckedItems();
                 boolean hasActive = false;
@@ -248,6 +255,7 @@ public class ShareListActivity extends ListActivity implements AdapterView.OnIte
     protected void onResume() {
         super.onResume();
         if (mOnCreateRun) {
+            updateListViewVisibility();
             showSelectedItem();
             mOnCreateRun = false;
         } else {
@@ -304,15 +312,16 @@ public class ShareListActivity extends ListActivity implements AdapterView.OnIte
             mSelectedItem = pos;
             return;
         }
-        ListView lv = getListView();
-        int l = lv.getCount();
+        int l = mListView.getCount();
         if (mSelectedItem >= 0 && mSelectedItem < l) {
-            lv.getChildAt(mSelectedItem)
-                    .setBackgroundResource(R.drawable.apptheme_list_selector_holo_light);
+            // FIXME
+            // mListView.getChildAt(mSelectedItem)
+            //        .setBackgroundResource(R.drawable.apptheme_list_selector_holo_light);
         }
         if (pos >= 0 && pos < l) {
-            lv.getChildAt(pos).setBackgroundResource(
-                    R.drawable.apptheme_list_selector_holo_light_selected);
+            // FIXME
+            // mListView.getChildAt(pos).setBackgroundResource(
+            //        R.drawable.apptheme_list_selector_holo_light_selected);
         }
         mSelectedItem = pos;
     }
@@ -340,7 +349,7 @@ public class ShareListActivity extends ListActivity implements AdapterView.OnIte
             if (f != null && f instanceof ShareFragment) {
                 // do not show already active fragments
                 String activeHash = ((ShareFragment) f).getHash();
-                if (mSelectedHash.equals(activeHash)) {
+                if (mSelectedHash != null && mSelectedHash.equals(activeHash)) {
                     Log.d(TAG, "fragment is already active: ", activeHash);
                     return;
                 }
@@ -463,7 +472,7 @@ public class ShareListActivity extends ListActivity implements AdapterView.OnIte
     }
 
     private List<ShareItem> getCheckedItems() {
-        SparseBooleanArray checked = getListView().getCheckedItemPositions();
+        SparseBooleanArray checked = mListView.getCheckedItemPositions();
         int l = checked.size();
         ArrayList<ShareItem> list = new ArrayList<>(l);
         for (int i = 0; i < l; ++i) {
@@ -474,10 +483,23 @@ public class ShareListActivity extends ListActivity implements AdapterView.OnIte
         return list;
     }
 
+    private void updateListViewVisibility() {
+        int c = mContainer.size();
+        if (c == 0) {
+            mListView.setVisibility(View.INVISIBLE);
+            mEmptyView.setVisibility(View.VISIBLE);
+        } else {
+            mListView.setVisibility(View.VISIBLE);
+            mEmptyView.setVisibility(View.GONE);
+        }
+
+    }
+
     public void invalidateData() {
         Log.d(TAG, "invalidateData()");
-        ((ShareItemAdapter) getListAdapter()).notifyDataSetInvalidated();
+        ((ShareItemAdapter) mListView.getAdapter()).notifyDataSetInvalidated();
         invalidateOptionsMenu();
+        updateListViewVisibility();
         showSelectedItem();
         HttpService.startService(this);
     }
