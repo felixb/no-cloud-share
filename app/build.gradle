@@ -4,10 +4,21 @@ buildscript {
     }
     dependencies {
         classpath 'com.jakewharton:butterknife:+'
+        classpath('com.github.triplet.gradle:play-publisher:1.0.0') {
+            exclude group: 'com.google.guava'
+        }
     }
 }
 
 apply plugin: 'com.android.application'
+apply plugin: 'play'
+
+play {
+    uploadImages = true
+    serviceAccountEmail =
+            '925691948433-pl4bec638njeenipednmsmo0q55j6907@developer.gserviceaccount.com'
+    pk12File = file('play_api_client.p12')
+}
 
 repositories {
     maven {
