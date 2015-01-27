@@ -2,6 +2,7 @@ package de.ub0r.android.nocloudshare;
 
 import org.jetbrains.annotations.NotNull;
 
+import android.annotation.TargetApi;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -11,6 +12,7 @@ import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
@@ -77,9 +79,15 @@ public class ShareListActivity extends ActionBarActivity
 
         private static final int LAYOUT = R.layout.item_share;
 
-        private final Context mContext;
-
         private final DateFormat mFormat;
+
+        private final String mCreationTs, mExpirationTs;
+
+        private final int mExpiredTextColor, mNotExpiredTextColor;
+
+        private final BitmapLruCache mCache;
+
+        private final Drawable mBackGround;
 
         private final List<ShareItem> mDataSet;
 
@@ -88,9 +96,18 @@ public class ShareListActivity extends ActionBarActivity
         private boolean mInSelectionMode;
 
         public ShareItemAdapter(final Context context, final List<ShareItem> objects) {
-            mContext = context;
             mFormat = android.text.format.DateFormat.getTimeFormat(context);
             mDataSet = objects;
+            mCreationTs = context.getString(R.string.creation_ts);
+            mExpirationTs = context.getString(R.string.expiration_ts);
+            mExpiredTextColor = context.getResources().getColor(R.color.expired);
+            mNotExpiredTextColor = context.getResources().getColor(R.color.not_expired);
+            mCache = BitmapLruCache.getDefaultBitmapLruCache(context);
+
+            int[] attrs = new int[]{android.R.attr.selectableItemBackground};
+            TypedArray ta = context.obtainStyledAttributes(attrs);
+            mBackGround = ta.getDrawable(0);
+            ta.recycle();
         }
 
         @Override
@@ -100,40 +117,34 @@ public class ShareListActivity extends ActionBarActivity
             return new ViewHolder(v);
         }
 
+        @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
         @Override
         public void onBindViewHolder(final ViewHolder h, final int pos) {
             ShareItem item = mDataSet.get(pos);
 
-            // TODO move all calls to mContext to constructor
-
             h.nameTextView.setText(item.getName());
             h.mimeTextView.setText(item.getMimeType());
             Date creation = new Date(item.getCreation());
-            h.creationTextView.setText(mContext.getString(R.string.creation_ts,
-                    mFormat.format(creation)));
+            h.creationTextView.setText(String.format(mCreationTs, mFormat.format(creation)));
             Date expiration = new Date(item.getExpiration());
-            h.expirationTextView.setText(
-                    mContext.getString(R.string.expiration_ts, mFormat.format(expiration)));
-            h.expirationTextView.setTextColor(mContext.getResources()
-                    .getColor(item.isExpired() ? R.color.expired : R.color.not_expired));
+            h.expirationTextView.setText(String.format(mExpirationTs, mFormat.format(expiration)));
+            h.expirationTextView
+                    .setTextColor(item.isExpired() ? mExpiredTextColor : mNotExpiredTextColor);
             h.backgroundView.setActivated(mSelectedItems.get(pos, false));
             if (mInSelectionMode) {
                 h.backgroundView.setBackgroundResource(R.drawable.selector_list_item);
+            } else if (BuildConfig.VERSION_CODE >= Build.VERSION_CODES.JELLY_BEAN) {
+                h.backgroundView.setBackground(mBackGround);
             } else {
-                int[] attrs = new int[]{android.R.attr.selectableItemBackground};
-                TypedArray ta = mContext.obtainStyledAttributes(attrs);
-                Drawable drawableFromTheme = ta.getDrawable(0);
-                ta.recycle();
-                h.backgroundView.setBackgroundDrawable(drawableFromTheme);
+                //noinspection deprecation
+                h.backgroundView.setBackgroundDrawable(mBackGround);
             }
 
             String thumb = item.getThumbnailName();
             if (thumb == null) {
                 h.thumbnailImageView.setVisibility(View.GONE);
             } else {
-                BitmapLruCache cache = BitmapLruCache
-                        .getDefaultBitmapLruCache(mContext);
-                Bitmap b = cache.getBitmap(thumb);
+                Bitmap b = mCache.getBitmap(thumb);
                 if (b == null) {
                     h.thumbnailImageView.setVisibility(View.GONE);
                 } else {
