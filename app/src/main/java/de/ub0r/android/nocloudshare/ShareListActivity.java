@@ -159,13 +159,30 @@ public class ShareListActivity extends ActionBarActivity
             return mDataSet.size();
         }
 
-        public void toggleSelection(final int pos) {
-            if (mSelectedItems.get(pos, false)) {
-                mSelectedItems.delete(pos);
-            } else {
+        public void setSelectedItem(final int pos, boolean selected) {
+            if (pos < 0 || pos >= mDataSet.size()) {
+                Log.e(TAG, "setSelectedItem(%d): invalid index", pos);
+                return;
+            }
+            if (!mInSelectionMode) {
+                // disable all selected items when not in CAB mode
+                int l = mSelectedItems.size();
+                for (int i = 0; i < l; i++) {
+                    int p = mSelectedItems.keyAt(i);
+                    mSelectedItems.delete(p);
+                    notifyItemChanged(p);
+                }
+            }
+            if (selected) {
                 mSelectedItems.put(pos, true);
+            } else {
+                mSelectedItems.delete(pos);
             }
             notifyItemChanged(pos);
+        }
+
+        public void toggleSelection(final int pos) {
+            setSelectedItem(pos, !mSelectedItems.get(pos, false));
         }
 
         public void clearSelections() {
@@ -175,14 +192,6 @@ public class ShareListActivity extends ActionBarActivity
 
         public int getSelectedItemCount() {
             return mSelectedItems.size();
-        }
-
-        public List<Integer> getSelectedItemPositions() {
-            List<Integer> items = new ArrayList<>(mSelectedItems.size());
-            for (int i = 0; i < mSelectedItems.size(); i++) {
-                items.add(mSelectedItems.keyAt(i));
-            }
-            return items;
         }
 
         public List<ShareItem> getSelectedItems() {
@@ -195,6 +204,7 @@ public class ShareListActivity extends ActionBarActivity
 
         public void setInSelectionMode(final boolean mode) {
             mInSelectionMode = mode;
+            notifyDataSetChanged();
         }
     }
 
@@ -326,7 +336,7 @@ public class ShareListActivity extends ActionBarActivity
         onItemCheckedStateChanged(mActionMode);
     }
 
-    public void onItemCheckedStateChanged(final ActionMode mode) {
+    private void onItemCheckedStateChanged(final ActionMode mode) {
         int c = mAdapter.getSelectedItemCount();
         if (c == 0) {
             mode.finish();
@@ -398,31 +408,19 @@ public class ShareListActivity extends ActionBarActivity
         startActivity(new Intent(this, IntroActivity.class));
     }
 
-    private void setSelectedItemBackground(final int pos) {
+    private void setSelectedItem(final int pos) {
+        mSelectedItem = pos;
         if (!mIsTwoPane) {
-            mSelectedItem = pos;
             return;
         }
-        int l = mContainer.size();
-        if (mSelectedItem >= 0 && mSelectedItem < l) {
-            // FIXME
-            // mListView.getChildAt(mSelectedItem)
-            //        .setBackgroundResource(R.drawable.apptheme_list_selector_holo_light);
-        }
-        if (pos >= 0 && pos < l) {
-            // FIXME
-            // mListView.getChildAt(pos).setBackgroundResource(
-            //        R.drawable.apptheme_list_selector_holo_light_selected);
-        }
-        mSelectedItem = pos;
+        mAdapter.setSelectedItem(pos, true);
     }
 
     public void showItem(final int pos) {
         Log.d(TAG, "showItem(", pos, ")");
         ShareItem item = mContainer.get(pos);
         showItem(item);
-
-        setSelectedItemBackground(pos);
+        setSelectedItem(pos);
     }
 
     private void showItem(final ShareItem item) {
@@ -464,7 +462,7 @@ public class ShareListActivity extends ActionBarActivity
                 }
             }
             if (mSelectedItem >= 0 && mSelectedItem != pos) {
-                setSelectedItemBackground(pos);
+                setSelectedItem(pos);
             }
         }
     }
