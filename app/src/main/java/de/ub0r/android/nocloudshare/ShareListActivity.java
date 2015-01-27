@@ -104,7 +104,7 @@ public class ShareListActivity extends ActionBarActivity
             mNotExpiredTextColor = context.getResources().getColor(R.color.not_expired);
             mCache = BitmapLruCache.getDefaultBitmapLruCache(context);
 
-            int[] attrs = new int[]{android.R.attr.selectableItemBackground};
+            int[] attrs = new int[]{R.attr.selectableItemBackground};
             TypedArray ta = context.obtainStyledAttributes(attrs);
             mBackGround = ta.getDrawable(0);
             ta.recycle();
@@ -131,7 +131,7 @@ public class ShareListActivity extends ActionBarActivity
             h.expirationTextView
                     .setTextColor(item.isExpired() ? mExpiredTextColor : mNotExpiredTextColor);
             h.backgroundView.setActivated(mSelectedItems.get(pos, false));
-            if (mInSelectionMode) {
+            if (mInSelectionMode || mSelectedItems.get(pos, false)) {
                 h.backgroundView.setBackgroundResource(R.drawable.selector_list_item);
             } else if (BuildConfig.VERSION_CODE >= Build.VERSION_CODES.JELLY_BEAN) {
                 h.backgroundView.setBackground(mBackGround);
@@ -204,7 +204,7 @@ public class ShareListActivity extends ActionBarActivity
 
         public void setInSelectionMode(final boolean mode) {
             mInSelectionMode = mode;
-            notifyDataSetChanged();
+            clearSelections();
         }
     }
 
@@ -253,7 +253,6 @@ public class ShareListActivity extends ActionBarActivity
         mAdapter = new ShareItemAdapter(this, mContainer);
         mListView.setAdapter(mAdapter);
         mListView.addOnItemTouchListener(new RecyclerItemClickListener(this, mListView, this));
-        //mListView.setMultiChoiceModeListener(this);
 
         if (savedInstanceState == null) {
             String action = getIntent().getAction();
@@ -394,7 +393,7 @@ public class ShareListActivity extends ActionBarActivity
     public void onDestroyActionMode(final ActionMode mode) {
         mAdapter.setInSelectionMode(false);
         mActionMode = null;
-        mAdapter.clearSelections();
+        mAdapter.setSelectedItem(mSelectedItem, true);
     }
 
     @Override
