@@ -78,6 +78,9 @@ public class ShareFragment extends Fragment {
 
     private Intent mIntent;
 
+    @InjectView(R.id.url_index)
+    TextView mUrlIndexTextView;
+
     @InjectView(R.id.url)
     TextView mUrlTextView;
 
@@ -297,6 +300,14 @@ public class ShareFragment extends Fragment {
         Log.i(TAG, "share url: ", url);
         String bcUrl = BARCODE_URL + Uri.encode(url);
 
+        if (PreferenceManager.getDefaultSharedPreferences(getActivity()).getBoolean(
+                SettingsActivity.PREFS_SHOW_INDEX, false)) {
+            mUrlIndexTextView.setVisibility(View.VISIBLE);
+        } else {
+            mUrlIndexTextView.setVisibility(View.GONE);
+        }
+
+        mUrlIndexTextView.setText(mBaseUrl + "/");
         mUrlTextView.setText(url);
         mUrlImageView.setImageUrl(bcUrl, mLoader);
 
@@ -403,12 +414,12 @@ public class ShareFragment extends Fragment {
         }
     }
 
-    @OnClick(R.id.url)
-    void onUrlClick() {
+    @OnClick({R.id.url, R.id.url_index})
+    void onUrlClick(final TextView v) {
         ClipboardManager cm = (ClipboardManager) getActivity().getSystemService(
                 Context.CLIPBOARD_SERVICE);
         cm.setPrimaryClip(
-                ClipData.newPlainText(mItem.getName(), mBaseUrl + mItem.getExternalPath()));
+                ClipData.newPlainText(mItem.getName(), v.getText().toString()));
         Toast.makeText(getActivity(), R.string.copied_to_clipboard, Toast.LENGTH_LONG).show();
     }
 

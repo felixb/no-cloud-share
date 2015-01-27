@@ -16,6 +16,23 @@
             android:layout_centerInParent="true"/>
 
     <TextView
+            android:id="@+id/url_index"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:layout_above="@+id/url"
+            android:layout_centerHorizontal="true"
+            android:singleLine="true"
+            android:ellipsize="middle"
+            android:textAppearance="?android:textAppearanceMedium"
+            android:text="http://127.0.0.1/index.html"
+            tools:ignore="HardcodedText"/>
+
+    <TextView
             android:id="@+id/url"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
