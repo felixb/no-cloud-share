@@ -14,4 +14,13 @@
     <include
             layout="@layout/include_empty"/>
 
+    <Button
+            android:id="@+id/add_item"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_margin="8dp"
+            android:layout_gravity="bottom|right"
+            android:background="@drawable/ic_content_add_circle"
+            android:elevation="8dp"/>
+
 </FrameLayout>

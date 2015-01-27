@@ -31,4 +31,14 @@
             android:layout_toRightOf="@+id/divider"
             android:layout_toEndOf="@+id/divider"/>
 
+    <Button
+            android:id="@+id/add_item"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_margin="8dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/ic_content_add_circle"
+            android:elevation="8dp"/>
+
 </RelativeLayout>

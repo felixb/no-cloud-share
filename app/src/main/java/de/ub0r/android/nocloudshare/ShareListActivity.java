@@ -210,6 +210,8 @@ public class ShareListActivity extends ActionBarActivity
 
     private static final String TAG = "ShareListActivity";
 
+    private static final int REQUEST_PICK = 1;
+
     private static final String PREF_SHOWN_INTRO = "intro_has_been_shown";
 
     private ShareItemContainer mContainer;
@@ -231,6 +233,9 @@ public class ShareListActivity extends ActionBarActivity
 
     @InjectView(android.R.id.empty)
     View mEmptyView;
+
+    @InjectView(R.id.add_item)
+    View mAddView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -312,6 +317,23 @@ public class ShareListActivity extends ActionBarActivity
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @OnClick(R.id.add_item)
+    void onAddItemClick() {
+        Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+        i.addCategory(Intent.CATEGORY_OPENABLE);
+        i.setType("*/*");
+        startActivityForResult(i, REQUEST_PICK);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (REQUEST_PICK == requestCode && resultCode == RESULT_OK && data != null) {
+            Log.d(TAG, "returned data: %s", data.getData());
+            showItem(data);
         }
     }
 

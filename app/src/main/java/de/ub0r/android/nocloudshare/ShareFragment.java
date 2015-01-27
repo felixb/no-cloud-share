@@ -198,6 +198,9 @@ public class ShareFragment extends Fragment {
             list.add(item);
         } else if (i.getData() != null) {
             ShareItem item = mContainer.add(i.getData(), mimeType);
+            if (mimeType == null) {
+                item.setInfos(getActivity());
+            }
             item.setExpireIn(expirationPeriod);
             list.add(item);
         } else if (Intent.ACTION_SEND.equals(action)) {
