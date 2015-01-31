@@ -26,6 +26,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -235,7 +236,7 @@ public class ShareListActivity extends ActionBarActivity
     View mEmptyView;
 
     @InjectView(R.id.add_item)
-    View mAddView;
+    ImageButton mAddView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

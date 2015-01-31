@@ -20,6 +20,4 @@
         <item name="centered">true</item>
     </style>
 
-    <drawable name="default_background_selector">?android:selectableItemBackground</drawable>
-
 </resources>

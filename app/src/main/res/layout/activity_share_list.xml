@@ -14,13 +14,17 @@
     <include
             layout="@layout/include_empty"/>
 
-    <Button
+    <ImageButton
             android:id="@+id/add_item"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_margin="8dp"
+            android:layout_width="@dimen/fab_dimen"
+            android:layout_height="@dimen/fab_dimen"
+            android:layout_margin="@dimen/fab_margin"
             android:layout_gravity="bottom|right"
-            android:background="@drawable/ic_content_add_circle"
-            android:elevation="8dp"/>
+            android:contentDescription="@string/action_add_item"
+            android:src="@android:drawable/ic_input_add"
+            android:tint="@android:color/white"
+            android:background="@drawable/circle"
+            android:stateListAnimator="@anim/button_elevation"
+            android:elevation="@dimen/fab_elevation_high"/>
 
 </FrameLayout>
