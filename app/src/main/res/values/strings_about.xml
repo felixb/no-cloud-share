@@ -13,9 +13,8 @@
     <string name="about_oos_libs_value_1" translatable="false">ub0r logg0r by Felix Bechstein (https://github.com/felixb/ub0rlogg0r)</string>
     <string name="about_oos_libs_value_2" translatable="false">butterknife by Jake Wharton (https://github.com/JakeWharton/butterknife)</string>
     <string name="about_oos_libs_value_3" translatable="false">DiskLruCache by Jake Wharton (https://github.com/JakeWharton/DiskLruCache)</string>
-    <string name="about_oos_libs_value_4" translatable="false">ViewPageIndicator by Jake Wharton (https://github.com/JakeWharton/Android-ViewPagerIndicator)</string>
-    <string name="about_oos_libs_value_5" translatable="false">volley by google (https://android.googlesource.com/platform/frameworks/volley/)</string>
-    <string name="about_oos_libs_value_6" translatable="false">gson by google (https://code.google.com/p/google-gson/)</string>
+    <string name="about_oos_libs_value_4" translatable="false">volley by google (https://android.googlesource.com/platform/frameworks/volley/)</string>
+    <string name="about_oos_libs_value_5" translatable="false">gson by google (https://code.google.com/p/google-gson/)</string>
 
     <string name="step_num">%d. step</string>
     <string name="intro_description">Screenshot for below text</string>

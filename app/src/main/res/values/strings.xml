@@ -29,10 +29,13 @@
     <string name="extended_num">%d items extended</string>
     <string name="copied_to_clipboard">URL copied to clipboard</string>
     <string name="empty_list">No active shares</string>
-    <string name="empty_list_text">This is only an overview of content you are sharing within your WiFi network.\n\nUse the share feature in your favorite app to share things here.</string>
+    <string name="empty_list_text">Use the \"plus\" button or the share feature in your favorite app to share things here.</string>
     <string name="thumbnail_description">Preview of shared image</string>
 
     <string name="intro">Intro</string>
+    <string name="intro_finish">Finish</string>
+    <string name="intro_next">Next</string>
+    <string name="intro_prev">Previous</string>
 
     <string name="settings_show_index">Show index</string>
     <string name="settings_show_index_on">Show a list of shared files to http://your.ip/</string>

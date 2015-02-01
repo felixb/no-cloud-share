@@ -1,85 +1,35 @@
 package de.ub0r.android.nocloudshare;
 
-import com.viewpagerindicator.CirclePageIndicator;
-
-import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.Button;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
+import de.ub0r.android.nocloudshare.adapter.IntroAdapter;
 
 /**
  * @author flx
  */
-public class IntroActivity extends ActionBarActivity {
-
-    static class IntroAdapter extends PagerAdapter {
-
-        private static final int[] IMAGES = {
-                R.drawable.intro_0,
-                R.drawable.intro_1,
-                R.drawable.intro_2,
-        };
-
-        private static final int[] TEXTS = {
-                R.string.intro_0,
-                R.string.intro_1,
-                R.string.intro_2,
-        };
-
-        private final Context mContext;
-
-        private final LayoutInflater mInflater;
-
-        public IntroAdapter(final Context context) {
-            mContext = context;
-            mInflater = LayoutInflater.from(context);
-        }
-
-        @Override
-        public Object instantiateItem(final ViewGroup container, final int position) {
-            View v = mInflater.inflate(R.layout.item_intro, container, false);
-            ImageView iv = (ImageView) v.findViewById(android.R.id.icon);
-            TextView tv1 = (TextView) v.findViewById(android.R.id.text1);
-            TextView tv2 = (TextView) v.findViewById(android.R.id.text2);
-            iv.setImageResource(IMAGES[position]);
-            tv1.setText(mContext.getString(R.string.step_num, position + 1));
-            tv2.setText(TEXTS[position]);
-            container.addView(v);
-            return v;
-        }
-
-        @Override
-        public void destroyItem(final ViewGroup container, final int position,
-                final Object object) {
-            container.removeView((View) object);
-        }
-
-        @Override
-        public int getCount() {
-            return 3;
-        }
-
-        @Override
-        public boolean isViewFromObject(final View view, final Object object) {
-            return view == object;
-        }
-    }
+public class IntroActivity extends ActionBarActivity implements ViewPager.OnPageChangeListener {
 
     @InjectView(R.id.viewpager)
     ViewPager mViewPager;
 
-    @InjectView(R.id.indicator)
-    CirclePageIndicator mIndicator;
+    @InjectView(R.id.prev)
+    Button mPrevButton;
+
+    @InjectView(R.id.next)
+    Button mNextButton;
+
+    @InjectView(R.id.finish)
+    Button mFinishButton;
+
+    private IntroAdapter mAdapter;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -89,8 +39,10 @@ public class IntroActivity extends ActionBarActivity {
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mViewPager.setAdapter(new IntroAdapter(this));
-        mIndicator.setViewPager(mViewPager);
+        mAdapter = new IntroAdapter(this);
+        mViewPager.setAdapter(mAdapter);
+        mViewPager.setOnPageChangeListener(this);
+        onPageSelected(mViewPager.getCurrentItem());
     }
 
     @Override
@@ -103,4 +55,50 @@ public class IntroActivity extends ActionBarActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    @OnClick(R.id.prev)
+    void onPrevClick() {
+        int pos = mViewPager.getCurrentItem();
+        if (pos > 0) {
+            mViewPager.setCurrentItem(pos - 1, true);
+        }
+    }
+
+    @OnClick(R.id.next)
+    void onNextClick() {
+        int pos = mViewPager.getCurrentItem();
+        int length = mViewPager.getChildCount();
+        if (pos < length - 1) {
+            mViewPager.setCurrentItem(pos + 1, true);
+        }
+    }
+
+    @OnClick(R.id.finish)
+    void onFinishClick() {
+        finish();
+    }
+
+    @Override
+    public void onPageScrolled(final int pos, final float posOffset, final int posOffsetPix) {
+        // nothing to do
+    }
+
+    @Override
+    public void onPageSelected(final int pos) {
+        int length = mAdapter.getCount();
+        mPrevButton.setEnabled(pos > 0);
+        if (pos == length - 1) {
+            mNextButton.setVisibility(View.GONE);
+            mFinishButton.setVisibility(View.VISIBLE);
+        } else {
+            mNextButton.setVisibility(View.VISIBLE);
+            mFinishButton.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onPageScrollStateChanged(final int state) {
+        // nothing to do
+    }
+
 }

@@ -3,22 +3,52 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:paddingTop="@dimen/activity_vertical_margin"
-              android:paddingBottom="@dimen/activity_vertical_margin"
-              android:paddingLeft="@dimen/activity_horizontal_margin"
-              android:paddingRight="@dimen/activity_horizontal_margin">
+              android:layout_height="match_parent">
 
     <android.support.v4.view.ViewPager
             android:id="@+id/viewpager"
             android:layout_width="match_parent"
             android:layout_height="0dip"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:paddingTop="@dimen/activity_vertical_margin"
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"/>
 
-    <com.viewpagerindicator.CirclePageIndicator
-            android:id="@+id/indicator"
-            android:layout_height="wrap_content"
+    <LinearLayout
             android:layout_width="match_parent"
-            android:paddingTop="2dp"/>
+            android:layout_height="wrap_content"
+            style="?android:attr/buttonBarStyle">
 
+        <Button
+                android:id="@+id/prev"
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableLeft="@drawable/ic_action_left"
+                android:drawableStart="@drawable/ic_action_left"
+                android:text="@string/intro_prev"
+                style="?android:attr/buttonBarButtonStyle"
+                android:textColor="@color/material_text_primary"/>
+        <Button
+                android:id="@+id/next"
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableRight="@drawable/ic_action_right"
+                android:drawableEnd="@drawable/ic_action_right"
+                android:text="@string/intro_next"
+                style="?android:attr/buttonBarButtonStyle"
+                android:textColor="@color/material_text_primary"/>
+        <Button
+                android:id="@+id/finish"
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableRight="@drawable/ic_action_done"
+                android:drawableEnd="@drawable/ic_action_done"
+                android:text="@string/intro_finish"
+                style="?android:attr/buttonBarButtonStyle"
+                android:textColor="@color/material_text_primary"/>
+    </LinearLayout>
 </LinearLayout>

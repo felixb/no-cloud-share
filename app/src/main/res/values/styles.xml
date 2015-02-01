@@ -6,18 +6,6 @@
         <item name="colorPrimary">@color/material_primary</item>
         <item name="colorPrimaryDark">@color/material_primary_dark</item>
         <item name="colorAccent">@color/material_accent</item>
-
-        <!-- ViewPageIndicator -->
-        <item name="vpiCirclePageIndicatorStyle">@style/CustomCirclePageIndicator</item>
-    </style>
-
-    <!-- ViewPageIndicator -->
-    <style name="CustomCirclePageIndicator">
-        <item name="fillColor">@color/material_primary</item>
-        <item name="strokeColor">@color/material_primary_dark</item>
-        <item name="strokeWidth">1dp</item>
-        <item name="radius">5dp</item>
-        <item name="centered">true</item>
     </style>
 
 </resources>

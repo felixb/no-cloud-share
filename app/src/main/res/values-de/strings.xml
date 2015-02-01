@@ -28,10 +28,13 @@
     <string name="extended_num">%d verlängert</string>
     <string name="copied_to_clipboard">URL in Zwischenablage kopiert</string>
     <string name="empty_list">Keine Medien geteilt</string>
-    <string name="empty_list_text">Dies ist nur eine Ansicht über die Inhalte, die du in deinem WLAN teilst.\n\nBenutz die Teilen Funktion in deiner Lieblingsapp um Medien hier zu teilen.</string>
+    <string name="empty_list_text">Benutz den \"plus\" Knopf oder die Teilen Funktion in deiner Lieblingsapp um Medien hier zu teilen.</string>
     <string name="thumbnail_description">Vorschau des geteilten Bildes</string>
 
     <string name="intro">Einführung</string>
+    <string name="intro_finish">Fertig</string>
+    <string name="intro_next">Weiter</string>
+    <string name="intro_prev">Zurück</string>
 
     <string name="settings_show_index">Index erstellen</string>
     <string name="settings_show_index_on">Zeige eine liste von geteilten Medien unter http://your.ip/</string>

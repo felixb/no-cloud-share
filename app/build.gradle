@@ -141,7 +141,6 @@ dependencies {
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'com.jakewharton:butterknife:6.0.0'
     compile 'com.jakewharton:disklrucache:2.0.2'
-    compile 'com.actionbarsherlock:viewpagerindicator:2.4.1'
     compile 'com.mcxiaoke.volley:library:1.0.10'
     compile 'com.google.android.gms:play-services-ads:6.5.87'
 }
