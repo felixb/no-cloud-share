@@ -87,6 +87,7 @@ android {
         targetSdkVersion 21
         versionName getVersionName()
         versionCode getVersionCode(minSdkVersion.mApiLevel)
+        buildConfigField 'boolean', 'ADS', 'true'
     }
 
     signingConfigs {
@@ -142,4 +143,5 @@ dependencies {
     compile 'com.jakewharton:disklrucache:2.0.2'
     compile 'com.actionbarsherlock:viewpagerindicator:2.4.1'
     compile 'com.mcxiaoke.volley:library:1.0.10'
+    compile 'com.google.android.gms:play-services-ads:6.5.87'
 }

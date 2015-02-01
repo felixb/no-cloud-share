@@ -1,5 +1,8 @@
 package de.ub0r.android.nocloudshare;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
 import org.jetbrains.annotations.NotNull;
 
 import android.annotation.TargetApi;
@@ -26,7 +29,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -235,14 +237,21 @@ public class ShareListActivity extends ActionBarActivity
     @InjectView(android.R.id.empty)
     View mEmptyView;
 
-    @InjectView(R.id.add_item)
-    ImageButton mAddView;
+    @InjectView(R.id.ads)
+    AdView mAdView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_share_list);
         ButterKnife.inject(this);
+
+        if (BuildConfig.ADS) {
+            mAdView.loadAd(new AdRequest.Builder().build());
+        } else {
+            mAdView.setVisibility(View.GONE);
+        }
+
         mListView.setHasFixedSize(true);
         mListView.setLayoutManager(new LinearLayoutManager(this));
         mContainer = ShareItemContainer.getInstance(this);
@@ -279,6 +288,7 @@ public class ShareListActivity extends ActionBarActivity
     @Override
     protected void onResume() {
         super.onResume();
+        mAdView.resume();
         if (mOnCreateRun) {
             updateListViewVisibility();
             showSelectedItem();
@@ -286,6 +296,18 @@ public class ShareListActivity extends ActionBarActivity
         } else {
             invalidateData();
         }
+    }
+
+    @Override
+    protected void onPause() {
+        mAdView.pause();
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        mAdView.destroy();
+        super.onDestroy();
     }
 
     @Override

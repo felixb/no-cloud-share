@@ -1,14 +1,24 @@
 <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         tools:context="de.ub0r.android.nocloudshare.ShareListActivity"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+    <com.google.android.gms.ads.AdView
+            android:id="@+id/ads"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|right"
+            app:adUnitId="ca-app-pub-1948477123608376/5351084483"
+            app:adSize="SMART_BANNER"/>
+
     <android.support.v7.widget.RecyclerView
             android:id="@android:id/list"
             android:layout_width="@dimen/listview_width"
             android:layout_height="match_parent"
+            android:layout_below="@+id/ads"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:scrollbars="vertical"/>
@@ -21,6 +31,7 @@
             android:layout_width="@dimen/listview_divider"
             android:layout_height="match_parent"
             android:background="@android:drawable/divider_horizontal_bright"
+            android:layout_below="@+id/ads"
             android:layout_toRightOf="@android:id/list"
             android:layout_toEndOf="@android:id/list"/>
 
@@ -29,8 +40,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_toRightOf="@+id/divider"
-            android:layout_toEndOf="@+id/divider"/>
-
+            android:layout_toEndOf="@+id/divider"
+            android:layout_below="@+id/ads"/>
 
     <ImageButton
             android:id="@+id/add_item"
