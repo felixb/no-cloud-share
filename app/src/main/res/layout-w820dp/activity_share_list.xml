@@ -30,7 +30,7 @@
             android:id="@+id/divider"
             android:layout_width="@dimen/listview_divider"
             android:layout_height="match_parent"
-            android:background="@android:drawable/divider_horizontal_bright"
+            android:background="?attr/dividerVertical"
             android:layout_below="@+id/ads"
             android:layout_toRightOf="@android:id/list"
             android:layout_toEndOf="@android:id/list"/>

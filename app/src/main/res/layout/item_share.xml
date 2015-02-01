@@ -9,7 +9,8 @@
         android:paddingRight="@dimen/item_share_padding_horizontal"
         android:paddingTop="@dimen/item_share_padding_vertical"
         android:paddingBottom="@dimen/item_share_padding_vertical"
-        android:clickable="true">
+        android:clickable="true"
+        android:background="@drawable/selector_list_item">
 
     <ImageView
             android:id="@+id/item_thumbnail"

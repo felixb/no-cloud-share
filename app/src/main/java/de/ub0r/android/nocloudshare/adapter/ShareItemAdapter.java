@@ -2,9 +2,7 @@ package de.ub0r.android.nocloudshare.adapter;
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseBooleanArray;
@@ -23,7 +21,6 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import de.ub0r.android.logg0r.Log;
-import de.ub0r.android.nocloudshare.BuildConfig;
 import de.ub0r.android.nocloudshare.R;
 import de.ub0r.android.nocloudshare.http.BitmapLruCache;
 import de.ub0r.android.nocloudshare.model.ShareItem;
@@ -71,8 +68,6 @@ public class ShareItemAdapter extends RecyclerView.Adapter<ShareItemAdapter.View
 
     private final BitmapLruCache mCache;
 
-    private final Drawable mBackGround;
-
     private final List<ShareItem> mDataSet;
 
     private final SparseBooleanArray mSelectedItems = new SparseBooleanArray();
@@ -87,11 +82,6 @@ public class ShareItemAdapter extends RecyclerView.Adapter<ShareItemAdapter.View
         mExpiredTextColor = context.getResources().getColor(R.color.text_expired);
         mNotExpiredTextColor = context.getResources().getColor(R.color.material_text_secondary);
         mCache = BitmapLruCache.getDefaultBitmapLruCache(context);
-
-        int[] attrs = new int[]{R.attr.selectableItemBackground};
-        TypedArray ta = context.obtainStyledAttributes(attrs);
-        mBackGround = ta.getDrawable(0);
-        ta.recycle();
     }
 
     @Override
@@ -115,14 +105,6 @@ public class ShareItemAdapter extends RecyclerView.Adapter<ShareItemAdapter.View
         h.expirationTextView
                 .setTextColor(item.isExpired() ? mExpiredTextColor : mNotExpiredTextColor);
         h.backgroundView.setActivated(mSelectedItems.get(pos, false));
-        if (mInSelectionMode || mSelectedItems.get(pos, false)) {
-            h.backgroundView.setBackgroundResource(R.drawable.selector_list_item);
-        } else if (BuildConfig.VERSION_CODE >= Build.VERSION_CODES.JELLY_BEAN) {
-            h.backgroundView.setBackground(mBackGround);
-        } else {
-            //noinspection deprecation
-            h.backgroundView.setBackgroundDrawable(mBackGround);
-        }
 
         String thumb = item.getThumbnailName();
         if (thumb == null) {
