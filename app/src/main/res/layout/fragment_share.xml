@@ -54,10 +54,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
             android:layout_marginTop="@dimen/activity_vertical_margin"
             android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:layout_below="@id/placeholder"
             android:layout_alignLeft="@+id/url"
+            android:layout_alignStart="@+id/url"
             android:textAppearance="?android:textAppearanceMedium"
             android:text="@string/creation_ts"/>
 
@@ -67,7 +69,9 @@
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/item_creation"
             android:layout_alignRight="@+id/url"
+            android:layout_alignEnd="@+id/url"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
             android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:textAppearance="?android:textAppearanceMedium"
             android:text="@string/expiration_ts"/>
@@ -88,4 +92,3 @@
             android:scaleType="fitCenter"/>
 
 </de.ub0r.android.nocloudshare.views.MeasuringRelativeLayout>
-

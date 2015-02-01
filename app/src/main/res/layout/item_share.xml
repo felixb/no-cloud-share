@@ -19,6 +19,7 @@
             android:layout_width="@dimen/item_share_thumbnail_width"
             android:layout_height="@dimen/item_share_thumbnail_height"
             android:layout_marginRight="@dimen/item_share_thumbnail_padding"
+            android:layout_marginEnd="@dimen/item_share_thumbnail_padding"
             android:scaleType="fitCenter"
             android:contentDescription="@string/thumbnail_description"/>
 
@@ -27,6 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:text="@string/creation_ts"/>
 
     <TextView
@@ -34,6 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:layout_below="@id/item_creation"
             android:text="@string/expiration_ts"/>
 
@@ -42,7 +45,9 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@id/item_creation"
+            android:layout_toStartOf="@id/item_creation"
             android:layout_toRightOf="@id/item_thumbnail"
+            android:layout_toEndOf="@id/item_thumbnail"
             android:singleLine="true"
             android:ellipsize="middle"
             android:textAppearance="?android:textAppearanceLarge"
@@ -55,7 +60,9 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/item_name"
             android:layout_alignLeft="@id/item_name"
+            android:layout_alignStart="@id/item_name"
             android:layout_alignRight="@id/item_name"
+            android:layout_alignEnd="@id/item_name"
             android:text="mime"
             tools:ignore="HardcodedText"/>
 
