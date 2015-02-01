@@ -21,6 +21,8 @@
     <string name="active_share">Currently sharing: %s</string>
     <string name="creation_ts">cr: %s</string>
     <string name="expiration_ts">ex: %s</string>
+    <string name="creation_long_ts">created: %s</string>
+    <string name="expiration_long_ts">expires: %s</string>
     <string name="expired">Expired</string>
     <string name="expired_num">%d items expired</string>
     <string name="removed">Removed</string>

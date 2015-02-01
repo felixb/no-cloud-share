@@ -20,6 +20,8 @@
     <string name="active_share">Teile aktuell: %s</string>
     <string name="creation_ts">erz: %s</string>
     <string name="expiration_ts">abl: %s</string>
+    <string name="creation_long_ts">erzeugt: %s</string>
+    <string name="expiration_long_ts">läuft ab: %s</string>
     <string name="expired">Abgelaufen</string>
     <string name="expired_num">%d abgelaufen</string>
     <string name="removed">Entfernt</string>

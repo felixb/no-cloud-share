@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="not_expired">@android:color/primary_text_light</color>
-    <color name="expired">#ff990000</color>
     <color name="material_primary">#8BC34A</color>
     <color name="material_primary_dark">#689F38</color>
     <color name="material_primary_light">#DCEDC8</color>
@@ -10,5 +8,6 @@
     <color name="material_text_primary">#212121</color>
     <color name="material_text_secondary">#727272</color>
     <color name="material_divider">#B6B6B6</color>
+    <color name="text_expired">#FF990000</color>
 
 </resources>

@@ -61,7 +61,7 @@
             android:layout_alignLeft="@+id/url"
             android:layout_alignStart="@+id/url"
             android:textAppearance="?android:textAppearanceMedium"
-            android:text="@string/creation_ts"/>
+            android:text="@string/creation_long_ts"/>
 
     <TextView
             android:id="@+id/item_expiration"
@@ -74,7 +74,7 @@
             android:layout_marginStart="@dimen/activity_horizontal_margin"
             android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:textAppearance="?android:textAppearanceMedium"
-            android:text="@string/expiration_ts"/>
+            android:text="@string/expiration_long_ts"/>
 
     <View
             android:id="@+id/shade"

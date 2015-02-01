@@ -84,8 +84,8 @@ public class ShareItemAdapter extends RecyclerView.Adapter<ShareItemAdapter.View
         mDataSet = objects;
         mCreationTs = context.getString(R.string.creation_ts);
         mExpirationTs = context.getString(R.string.expiration_ts);
-        mExpiredTextColor = context.getResources().getColor(R.color.expired);
-        mNotExpiredTextColor = context.getResources().getColor(R.color.not_expired);
+        mExpiredTextColor = context.getResources().getColor(R.color.text_expired);
+        mNotExpiredTextColor = context.getResources().getColor(R.color.material_text_secondary);
         mCache = BitmapLruCache.getDefaultBitmapLruCache(context);
 
         int[] attrs = new int[]{R.attr.selectableItemBackground};

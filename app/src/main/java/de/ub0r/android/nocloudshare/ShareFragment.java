@@ -315,13 +315,13 @@ public class ShareFragment extends Fragment {
         mUrlImageView.setImageUrl(bcUrl, mLoader);
 
         Date creation = new Date(mItem.getCreation());
-        mCreationTextView.setText(this.getString(R.string.creation_ts,
+        mCreationTextView.setText(this.getString(R.string.creation_long_ts,
                 mFormat.format(creation)));
         Date expiration = new Date(mItem.getExpiration());
         mExpirationTextView.setText(
-                this.getString(R.string.expiration_ts, mFormat.format(expiration)));
+                this.getString(R.string.expiration_long_ts, mFormat.format(expiration)));
         mExpirationTextView.setTextColor(this.getResources()
-                .getColor(mItem.isExpired() ? R.color.expired : R.color.not_expired));
+                .getColor(mItem.isExpired() ? R.color.text_expired : R.color.material_text_secondary));
 
         // start with desired animation state
         if (mState) {
