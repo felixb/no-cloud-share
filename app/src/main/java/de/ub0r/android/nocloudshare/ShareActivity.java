@@ -1,5 +1,6 @@
 package de.ub0r.android.nocloudshare;
 
+import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
@@ -34,10 +35,16 @@ public class ShareActivity extends ActionBarActivity {
         setContentView(R.layout.activity_share);
         ButterKnife.inject(this);
 
+        mAdView.setVisibility(View.GONE);
         if (BuildConfig.ADS) {
             mAdView.loadAd(new AdRequest.Builder().build());
-        } else {
-            mAdView.setVisibility(View.GONE);
+            mAdView.setAdListener(new AdListener() {
+                @Override
+                public void onAdLoaded() {
+                    mAdView.setVisibility(View.VISIBLE);
+                    super.onAdLoaded();
+                }
+            });
         }
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
