@@ -28,6 +28,7 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import butterknife.Optional;
 import de.ub0r.android.logg0r.Log;
 import de.ub0r.android.nocloudshare.adapter.ShareItemAdapter;
 import de.ub0r.android.nocloudshare.model.ShareItem;
@@ -63,6 +64,10 @@ public class ShareListActivity extends ActionBarActivity
 
     @InjectView(android.R.id.empty)
     View mEmptyView;
+
+    @Optional
+    @InjectView(R.id.divider)
+    View mDividerView;
 
     @InjectView(R.id.ads)
     AdView mAdView;
@@ -442,9 +447,15 @@ public class ShareListActivity extends ActionBarActivity
         if (c == 0) {
             mListView.setVisibility(View.INVISIBLE);
             mEmptyView.setVisibility(View.VISIBLE);
+            if (mDividerView != null) {
+                mDividerView.setVisibility(View.GONE);
+            }
         } else {
             mListView.setVisibility(View.VISIBLE);
             mEmptyView.setVisibility(View.GONE);
+            if (mDividerView != null) {
+                mDividerView.setVisibility(View.VISIBLE);
+            }
         }
 
     }
