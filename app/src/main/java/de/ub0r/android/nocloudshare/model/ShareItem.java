@@ -5,6 +5,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import de.ub0r.android.logg0r.Log;
@@ -100,7 +102,7 @@ public class ShareItem {
     }
 
     public String getExternalPath() {
-        return "/" + mHash + "/" + getName();
+        return "/" + mHash + "/" + Uri.encode(getName());
     }
 
     public long getCreation() {
@@ -127,29 +129,65 @@ public class ShareItem {
         return mExpiration < System.currentTimeMillis();
     }
 
-    public void setInfos(final Context context) {
-        if (mUri == null) {
-            return;
+    private void getInfos(final Context context, final String colName, final String colTitle,
+            final String colType) {
+        assert mUri != null;
+        List<String> l = new ArrayList<>();
+        if (colName != null) {
+            l.add(colName);
         }
-        String[] proj = {MediaStore.MediaColumns.DISPLAY_NAME,
-                MediaStore.MediaColumns.TITLE,
-                MediaStore.MediaColumns.MIME_TYPE};
-        Cursor c = context.getContentResolver().query(mUri, proj, null, null, null);
+        if (colTitle != null) {
+            l.add(colTitle);
+        }
+        if (colType != null) {
+            l.add(colType);
+        }
+        Cursor c = context.getContentResolver()
+                .query(mUri, l.toArray(new String[l.size()]), null, null, null);
         if (c != null && c.moveToFirst()) {
-            String name = c.getString(0);
-            if (name == null) {
-                name = c.getString(1);
+            String name = null;
+            String title = null;
+            String mimeType = null;
+
+            if (colName != null) {
+                name = c.getString(c.getColumnIndex(colName));
             }
+            if (colTitle != null) {
+                title = c.getString(c.getColumnIndex(colTitle));
+            }
+            if (colType != null) {
+                mimeType = c.getString(c.getColumnIndex(colType));
+            }
+
             if (name != null) {
                 setName(name);
+            } else if (title != null) {
+                setName(title);
             }
-            String mimeType = c.getString(2);
             if (mimeType != null) {
                 setMimeType(mimeType);
             }
         }
         if (c != null) {
             c.close();
+        }
+    }
+
+    public void setInfos(final Context context) {
+        if (mUri == null) {
+            return;
+        }
+        try {
+            getInfos(context, MediaStore.MediaColumns.DISPLAY_NAME, MediaStore.MediaColumns.TITLE,
+                    MediaStore.MediaColumns.MIME_TYPE);
+        } catch (IllegalArgumentException e) {
+            Log.e(TAG, "failed fetching meta data", e);
+            try {
+                getInfos(context, MediaStore.MediaColumns.DISPLAY_NAME, null,
+                        MediaStore.MediaColumns.MIME_TYPE);
+            } catch (IllegalArgumentException e1) {
+                Log.e(TAG, "failed fetching meta data", e1);
+            }
         }
     }
 
