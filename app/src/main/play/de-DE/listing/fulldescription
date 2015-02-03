@@ -1,0 +1,5 @@
+Mit dieser App kannst du beliebige Dateien verschicken.
+Sende Bilder von süßen Katzen, Selfies, ganze Kinofilme, riesige ZIP-Dateien oder irgendwas anders direkt über WLAN.
+
+Diese App wird die Dateien NICHT zu einem Cloud Service hochladen.
+Technisch gesehen, läuft in der App ein mini Webserver, von dem andere nach Freigabe die Dateien direkt laden können.
