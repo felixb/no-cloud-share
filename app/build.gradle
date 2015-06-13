@@ -3,7 +3,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.jakewharton:butterknife:+'
+        classpath 'com.jakewharton:butterknife:6.1.0'
         classpath('com.github.triplet.gradle:play-publisher:1.0.0') {
             exclude group: 'com.google.guava'
         }
@@ -22,7 +22,7 @@ play {
 
 repositories {
     maven {
-        url 'https://raw.githubusercontent.com/felixb/ub0rlogg0r/mvn-repo/'
+        url 'https://raw.githubusercontent.com/felixb/mvn-repo/master/'
     }
     maven {
         url 'https://raw.githubusercontent.com/Goddchen/mvn-repo/master/'
@@ -78,13 +78,13 @@ def getVersionCode = { minSdk ->
 }
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion '21.1.2'
+    compileSdkVersion 22
+    buildToolsVersion '22.0.1'
 
     defaultConfig {
         applicationId "de.ub0r.android.nocloudshare"
         minSdkVersion 15
-        targetSdkVersion 21
+        targetSdkVersion 22
         versionName getVersionName()
         versionCode getVersionCode(minSdkVersion.mApiLevel)
         buildConfigField 'boolean', 'ADS', 'true'
@@ -134,13 +134,13 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     //noinspection GradleDynamicVersion
     compile 'com.intellij:annotations:+@jar'
-    compile 'com.android.support:support-v4:21.0.3'
-    compile 'com.android.support:appcompat-v7:21.0.3'
+    compile 'com.android.support:support-v4:22.2.0'
+    compile 'com.android.support:appcompat-v7:22.2.0'
     compile 'com.android.support:recyclerview-v7:21.0.3'
     compile 'de.ub0r.android.logg0r:logg0r:2.0.0'
     compile 'com.google.code.gson:gson:2.3.1'
-    compile 'com.jakewharton:butterknife:6.0.0'
+    compile 'com.jakewharton:butterknife:6.1.0'
     compile 'com.jakewharton:disklrucache:2.0.2'
     compile 'com.mcxiaoke.volley:library:1.0.10'
-    compile 'com.google.android.gms:play-services-ads:6.5.87'
+    compile 'com.google.android.gms:play-services-ads:7.5.0'
 }
