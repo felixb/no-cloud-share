@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.NoSuchAlgorithmException;
 
 import de.ub0r.android.logg0r.Log;
 
@@ -169,11 +170,26 @@ public class BitmapLruCache implements ImageCache {
     }
 
     private String getKey(final String url) {
-        String key = url.replaceAll("[^a-z0-9_-]", "").replace("https", "").replace("http", "");
+        String key = url.replaceAll("[^a-zA-Z0-9_-]", "").replace("https", "").replace("http", "");
         if (key.length() > 64) {
-            key = key.substring(0, 64);
+            try {
+                key = "md5_" + md5(url);
+            } catch (java.security.NoSuchAlgorithmException e) {
+                return key.substring(0, 60) + "_" + url.hashCode();
+            }
         }
+        Log.d(TAG, "getKey(", url, "): ", key);
         return key;
+    }
+
+    private String md5(String text) throws NoSuchAlgorithmException {
+        java.security.MessageDigest md = java.security.MessageDigest.getInstance("MD5");
+        byte[] array = md.digest(text.getBytes());
+        StringBuilder sb = new StringBuilder();
+        for (byte b : array) {
+            sb.append(Integer.toHexString((b & 0xFF) | 0x100).substring(1, 3));
+        }
+        return sb.toString();
     }
 
     public void clear() {
