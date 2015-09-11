@@ -78,16 +78,15 @@ def getVersionCode = { minSdk ->
 }
 
 android {
-    compileSdkVersion 22
-    buildToolsVersion '22.0.1'
+    compileSdkVersion 23
+    buildToolsVersion '23.0.1'
 
     defaultConfig {
         applicationId "de.ub0r.android.nocloudshare"
         minSdkVersion 15
-        targetSdkVersion 22
+        targetSdkVersion 23
         versionName getVersionName()
         versionCode getVersionCode(minSdkVersion.mApiLevel)
-        buildConfigField 'boolean', 'ADS', 'true'
     }
 
     signingConfigs {
@@ -115,7 +114,7 @@ android {
         release {
             signingConfig signingConfigs.release
             proguardFile 'proguard.cfg'
-            minifyEnabled true
+            minifyEnabled false
         }
 
         applicationVariants.all { variant ->
@@ -131,16 +130,14 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
     //noinspection GradleDynamicVersion
     compile 'com.intellij:annotations:+@jar'
-    compile 'com.android.support:support-v4:22.2.0'
-    compile 'com.android.support:appcompat-v7:22.2.0'
-    compile 'com.android.support:recyclerview-v7:21.0.3'
+    compile 'com.android.support:support-v4:23.0.1'
+    compile 'com.android.support:appcompat-v7:23.0.1'
+    compile 'com.android.support:recyclerview-v7:23.0.1'
     compile 'de.ub0r.android.logg0r:logg0r:2.0.0'
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'com.jakewharton:butterknife:6.1.0'
     compile 'com.jakewharton:disklrucache:2.0.2'
     compile 'com.mcxiaoke.volley:library:1.0.16'
-    compile 'com.google.android.gms:play-services-ads:7.5.0'
 }

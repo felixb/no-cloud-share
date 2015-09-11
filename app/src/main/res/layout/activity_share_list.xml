@@ -1,25 +1,14 @@
 <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         tools:context="de.ub0r.android.nocloudshare.ShareListActivity"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <com.google.android.gms.ads.AdView
-            android:id="@+id/ads"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            app:adUnitId="ca-app-pub-1948477123608376/5351084483"
-            app:adSize="SMART_BANNER"/>
-
     <android.support.v7.widget.RecyclerView
             android:id="@android:id/list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/ads"
             android:scrollbars="vertical"/>
 
     <include

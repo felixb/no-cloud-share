@@ -1,9 +1,5 @@
 package de.ub0r.android.nocloudshare;
 
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-
 import org.jetbrains.annotations.NotNull;
 
 import android.app.Fragment;
@@ -69,26 +65,11 @@ public class ShareListActivity extends ActionBarActivity
     @InjectView(R.id.divider)
     View mDividerView;
 
-    @InjectView(R.id.ads)
-    AdView mAdView;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_share_list);
         ButterKnife.inject(this);
-
-        mAdView.setVisibility(View.GONE);
-        if (BuildConfig.ADS) {
-            mAdView.loadAd(new AdRequest.Builder().build());
-            mAdView.setAdListener(new AdListener() {
-                @Override
-                public void onAdLoaded() {
-                    mAdView.setVisibility(View.VISIBLE);
-                    super.onAdLoaded();
-                }
-            });
-        }
 
         mListView.setHasFixedSize(true);
         mListView.setLayoutManager(new LinearLayoutManager(this));
@@ -126,7 +107,6 @@ public class ShareListActivity extends ActionBarActivity
     @Override
     protected void onResume() {
         super.onResume();
-        mAdView.resume();
         if (mOnCreateRun) {
             updateListViewVisibility();
             showSelectedItem();
@@ -134,18 +114,6 @@ public class ShareListActivity extends ActionBarActivity
         } else {
             invalidateData();
         }
-    }
-
-    @Override
-    protected void onPause() {
-        mAdView.pause();
-        super.onPause();
-    }
-
-    @Override
-    protected void onDestroy() {
-        mAdView.destroy();
-        super.onDestroy();
     }
 
     @Override
